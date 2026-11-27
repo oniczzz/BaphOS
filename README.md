@@ -1,74 +1,152 @@
+<div align="center">
+
+<img src="assets/sigil/sigil-preview.png" width="192" alt="Сигил BaphOS">
+
 # BaphOS
 
-Пиксельный сатанинский райс для **niri** с оболочкой на **Quickshell**, для слабого железа
-(без blur и шейдеров). Палитра — чёрный, алый, тёмно-красный. Вся графика рисуется кодом
-(`art/*.py`, Pillow, nearest-neighbor).
+**Пиксельный сатанинский райс для [niri](https://github.com/YaLTeR/niri) на [Quickshell](https://quickshell.org)**
+чёрный · алый · тёмно-красный · всё нарисовано кодом · для слабого железа
 
-> В разработке: этапы — база niri → панель задач и Пуск → обои и сигил → темы → сюжет.
+`niri` · `quickshell 0.3` · `CachyOS / Arch` · `MIT`
+
+</div>
 
 ![Багровая луна](assets/wallpapers/preview-crimson-moon.png)
+
+> Вымышленный хоррор: в систему проник вирус культа. Он только рисует — ничего не удаляет,
+> не трогает чужие файлы и не ходит в сеть. Выключается одним флажком.
+
+---
+
+## Что внутри
+
+| | |
+|---|---|
+| ![Пуск](assets/previews/start-menu.png) | **Пуск** (`Mod+D` или кнопка с сигилом) вырастает из панели ступенями по 8 px, строки проявляются каскадом, в шапке горят свечи и дышит сигил. Поиск по программам, `?запрос` — поиск в сети, `>команда` — выполнить в терминале. Выход, перезагрузка и выключение — по второму клику. |
+| ![Настройки](assets/previews/settings.png) | **Настройки** (`Mod+S`): обои с миниатюрами, живые анимации и виджеты, сюжет (вкл/выкл, сброс прогресса), «О системе». |
+| ![Свиток клавиш](assets/previews/keys.png) | **Свиток клавиш** (`Mod+Shift+/`) — шпаргалка по всем сочетаниям. |
+| ![Терминал](assets/previews/kitty.png) | **Терминал kitty** (`Mod+T`): пиксельный Cozette, палитра BaphOS, алый курсор со шлейфом, сигил в углу окна, короткий fastfetch с сигилом из полублоков, prompt fish с веткой git. |
+
+**Панель задач** снизу: Пуск, окна (клик — перейти, средний клик — закрыть; свернуть окно niri не умеет),
+трей, раскладка, звук (колесо — громкость), батарея, часы шрифтом Press Start 2P.
+
+![Панель](assets/previews/taskbar.png)
+
+**Виджеты** на столе, под окнами: **Гримуар** (часы, фаза луны, отсчёт до полуночи, «Час бесов» в 3 ночи),
+**Око системы** (CPU, память, температура), **Литания** (музыка через MPRIS).
+
+**Ещё:** экран блокировки (`Super+Alt+L`, сам через 10 минут простоя), пиксельные уведомления,
+экран входа SDDM, темы GTK3/GTK4 и Qt, свой курсор 16 px и тема значков.
+
+![GTK и Qt](assets/previews/gtk-qt.png)
+
+## Обои — живые
 
 | | |
 |---|---|
 | ![Ритуал](assets/wallpapers/preview-ritual.png) | ![Лес](assets/wallpapers/preview-forest.png) |
 | ![Собор](assets/wallpapers/preview-cathedral.png) | ![Сигил](assets/wallpapers/preview-sigil.png) |
 
-![Значки](assets/previews/icons.png)
+Звёзды мерцают, пламя свечей дрожит, культисты моргают, глаза в лесу появляются и исчезают, розетка собора
+пульсирует, пролетают мыши и вороны, «Сигил» глитчит. Смена обоев (`Mod+Shift+W`) — пиксельной мозаикой.
+Картинка статична: оживают только мелкие спрайты, один таймер на 8 тиков в секунду, без шейдеров и blur.
 
-![Пуск](assets/previews/start-menu.png)
+## Сюжет
+
+![Шёпот](assets/previews/whisper.png)
+
+Пять этапов заражения — по времени в системе и по твоим действиям:
+
+1. **Проникновение** — «СИГНАЛ ПОЛУЧЕН», первые глитчи.
+2. **Шёпот** — послания культа, «Пуск» становится «Призывом», первый ритуал.
+3. **Знак** — на обоях проступает сигил, надписи меняются, где-то под полом есть **подвал**.
+4. **Литургия** — второй и третий ритуалы.
+5. **Коронация** — по панели задач гуляет **Агнец в красной короне**.
+
+| Ритуал | Подвал |
+|---|---|
+| ![Ритуал](assets/previews/ritual.png) | ![Подвал](assets/previews/base.png) |
+
+В ритуале молитва проявляется по строкам; чтобы пройти дальше, нужно произнести (ввести) ключевые слова.
+Пасхалки — кивки в сторону The Binding of Isaac (подвал, слёзы, предмет на алтаре) и Cult of the Lamb
+(коронованный ягнёнок); вся графика своя:
+
+![Графика сюжета](assets/previews/story-art.png)
+
+**Безопасность.** Сюжет пишет только `~/.local/state/baphos/settings.json`, не удаляет и не меняет файлов,
+не делает сетевых запросов. Выключить и сбросить — Настройки → Сюжет.
+Показать без ожидания: `qs -c baphos ipc call story intro` (а также `story ritual 1`, `story basement`,
+`story lamb`, `story glitch 3`).
 
 ## Графика
 
-Всё рисуется кодом в `art/`: палитра из 11 цветов, переходы — упорядоченный дизеринг (Байер 4x4),
-сцены в разрешении экрана / 4 и увеличение x4 без сглаживания — под каждый размер экрана своя картинка.
+Всё рисуется кодом в `art/` (Pillow): палитра из 11 цветов, переходы — упорядоченный дизеринг (Байер 4×4),
+сцены в разрешении экрана / 4 и увеличение ×4 без сглаживания — под каждый экран своя картинка.
 
-- **Обои** (`art/wallpapers.py`): Багровая луна, Ритуал, Лес, Собор, Сигил. Сменить — `Mod+Shift+W`
-  (переход — пиксельная мозаика). Обои **живые**: звёзды мерцают, пламя свечей дрожит, культисты моргают,
-  глаза в лесу появляются и пропадают, розетка собора пульсирует, пролетают мыши и вороны, «Сигил» глитчит.
-  Картинка статична — оживают только мелкие спрайты, 8 тиков в секунду, без шейдеров.
-- **Сигил** (`art/sigil.py`): двойной круг, перевёрнутая пентаграмма, козлиная голова.
-- **Значки** (`art/icons.py`): тема BaphOS, 16 px (+32/48/64), программы и папки; остальное — из Adwaita.
-- **Курсор** (`art/cursor.py`): 16 px.
+| Генератор | Что рисует |
+|---|---|
+| `wallpapers.py` | 5 сцен × 3 разрешения + данные и спрайты анимации |
+| `sigil.py` | сигил: двойной круг, перевёрнутая пентаграмма, козлиная голова |
+| `frames.py` | пиксельные рамки 9-slice: узорная (рога, «цепь»), кнопки, поля |
+| `icons.py` | тема значков BaphOS 16 px (+32/48/64) |
+| `cursor.py` | курсор 16 px |
+| `story.py` | ягнёнок, подвал, слеза, «Кровь Агнца» |
+| `fastfetch_logo.py` | сигил полублоками для fastfetch |
+| `ui_icons.py` | иконки интерфейса из Pixelarticons в цветах палитры |
 
-## Панель задач и Пуск
-
-- **Пуск** (кнопка с сигилом или `Mod+D`): поиск по приложениям, стрелки + Enter, Esc — закрыть;
-  выход / перезагрузка / выключение — по второму клику («Точно?»).
-- **Окна**: клик — перейти к окну, средний клик — закрыть. Свернуть окно в niri нельзя — такой функции у него нет.
-- **Справа**: трей, раскладка (клик — переключить), звук (колесо — громкость, клик — выкл), заряд батареи, часы.
+![Значки](assets/previews/icons.png)
 
 ## Установка
 
 ```sh
 git clone https://github.com/oniczzz/BaphOS.git ~/projects/BaphOS
 cd ~/projects/BaphOS
-./install.sh
+./install.sh            # пользовательская часть
+./install.sh --system   # плюс экран входа SDDM и курсор для него (sudo)
 ```
 
-Пакеты: `niri quickshell python-pillow xorg-xcursorgen librsvg foot fastfetch adw-gtk-theme qt6ct`, шрифт `cozette-otb` (AUR).
+Пакеты: `niri quickshell python-pillow xorg-xcursorgen librsvg kitty foot fastfetch fish adw-gtk-theme qt6ct`,
+шрифт `cozette-otb` (AUR).
 
-`install.sh` трогает только `~/.config` и `~/.local/share`:
-- `~/.config/niri/config.kdl` становится коротким файлом: `include` BaphOS и `include "monitor.kdl"`.
-  Свои настройки пиши в нём **ниже** — они перекроют BaphOS. Старый файл уходит в `config.kdl.bak.<дата>`.
-- `~/.config/quickshell/baphos` и курсор `~/.local/share/icons/BaphOS` — симлинки на репозиторий.
+`install.sh` трогает только `~/.config`, `~/.local/share` и `~/.local/bin` (с `--system` — ещё
+`/usr/share/sddm/themes/BaphOS`, `/usr/share/icons/BaphOS`, `/etc/sddm.conf.d/baphos.conf`):
 
-`./uninstall.sh` убирает симлинки и возвращает прежний `config.kdl` из последнего бэкапа.
+- `~/.config/niri/config.kdl` становится коротким файлом: `include` BaphOS и `include "monitor.kdl"`
+  (твои мониторы). Свои настройки пиши в нём **ниже** — они перекроют BaphOS.
+- Остальное — симлинки на репозиторий. Чужой файл на их месте не удаляется, а уходит в `<имя>.bak.<дата>`.
+
+`./uninstall.sh [--system]` убирает только свои симлинки и возвращает прежний `config.kdl` из бэкапа.
+
+## Клавиши
+
+| | | | |
+|---|---|---|---|
+| `Mod+D` | Пуск | `Mod+T` | терминал |
+| `Mod+S` | Настройки | `Mod+B` | браузер |
+| `Mod+Shift+W` | сменить обои | `Super+Alt+L` | заблокировать |
+| `Alt+Tab` | предыдущее окно | `Mod+Tab` | список окон |
+| `Mod+O` | обзор столов | `Mod+Shift+/` | свиток клавиш |
 
 ## Состав
 
 ```
-art/          генераторы графики: pixel.py, cursor.py, sigil.py, wallpapers.py, icons.py
-niri/         baphos.kdl — оформление, анимации, клавиши
-quickshell/   оболочка BaphOS: shell.qml, Taskbar, StartMenu, Wallpaper, Theme, Store (настройки), Niri
-assets/       icons/BaphOS (значки + курсор), wallpapers/, sigil/, превью
+art/          генераторы графики (Pillow)
+assets/       обои, сигил, значки и курсор, рамки, иконки интерфейса, сюжет, превью
+quickshell/   оболочка: shell, Taskbar, StartMenu, Settings, Widgets, Wallpaper(+Anim), Lock,
+              Notifications, KeyScroll, Story(+Overlay, Ritual, Basement), Theme, Store
+niri/         baphos.kdl — оформление, анимации, клавиши, правила
+kitty/ foot/ fish/ fastfetch/ gtk/ qt/ fontconfig/   темы программ
+sddm/         экран входа
+fonts/        шрифты (OFL, MIT)
 ```
 
-## Лицензия
+## Лицензии
 
 Код и графика BaphOS — MIT. Чужое, с лицензиями рядом:
 
-- шрифты в `fonts/` — SIL Open Font License 1.1: [Pixelify Sans](https://github.com/eifetx/Pixelify-Sans),
-  [Jacquard 24](https://github.com/scfried/soft-type-jacquard), [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P)
-  (взяты из [google/fonts](https://github.com/google/fonts));
-- иконки интерфейса `assets/ui/pixelarticons` — [Pixelarticons](https://github.com/halfmage/pixelarticons), MIT, перекрашены в палитру;
-- терминальный шрифт Cozette — пакет `cozette-otb` (MIT), в репозиторий не входит.
+- шрифты в `fonts/`: [Pixelify Sans](https://github.com/eifetx/Pixelify-Sans),
+  [Jacquard 24](https://github.com/scfried/soft-type-jacquard),
+  [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) — SIL OFL 1.1 (из [google/fonts](https://github.com/google/fonts));
+  [CozetteVector](https://github.com/slavfox/Cozette) — MIT;
+- иконки интерфейса `assets/ui/pixelarticons` — [Pixelarticons](https://github.com/halfmage/pixelarticons), MIT, перекрашены;
+- The Binding of Isaac и Cult of the Lamb — собственность их авторов; BaphOS лишь отсылает к ним своей графикой.
