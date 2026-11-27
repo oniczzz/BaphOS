@@ -84,7 +84,7 @@ PanelWindow {
         if (raw.startsWith(">") && raw.length > 1) {
             const c = raw.slice(1).trim();
             return [{ name: "Выполнить: " + c, icon: "utilities-terminal",
-                      execute: () => Quickshell.execDetached(["foot", "--hold", "sh", "-c", c]) }];
+                      execute: () => Quickshell.execDetached(["kitty", "--hold", "sh", "-c", c]) }];
         }
         const q = raw.toLowerCase();
         if (!q) return allApps;

@@ -19,7 +19,7 @@ PanelWindow {
 
     readonly property var keys: [
         ["Mod+D", "Пуск: поиск, ?сеть, >команда"],
-        ["Mod+T", "Терминал (foot)"],
+        ["Mod+T", "Терминал (kitty)"],
         ["Mod+B", "Браузер (Helium)"],
         ["Mod+S", "Настройки BaphOS"],
         ["Mod+Shift+W", "Сменить обои"],

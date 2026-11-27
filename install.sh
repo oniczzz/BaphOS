@@ -48,11 +48,15 @@ python3 art/frames.py                        # пиксельные рамки (
 
 link assets/icons/BaphOS     "$H/.local/share/icons/BaphOS"
 link fonts                   "$H/.local/share/fonts/BaphOS"     # Pixelify Sans, Jacquard 24, Press Start 2P (OFL)
+link fontconfig/50-baphos-cozette.conf "$H/.config/fontconfig/conf.d/50-baphos-cozette.conf"   # CozetteVector = моно (для kitty)
 command -v fc-cache >/dev/null && fc-cache -f "$H/.local/share/fonts" >/dev/null
 mkdir -p -- "$H/.local/state/baphos"          # настройки оболочки (обои, сюжет)
 link quickshell/baphos       "$H/.config/quickshell/baphos"
 link bin/niri-window-switch   "$H/.local/bin/niri-window-switch"   # Mod+Tab: список окон
-link foot/foot.ini            "$H/.config/foot/foot.ini"
+link kitty                   "$H/.config/kitty"                  # терминал по умолчанию
+# терминал по умолчанию для xdg-terminal-exec (Nautilus «Открыть в терминале» и т.п.)
+printf 'kitty.desktop\n' >"$H/.config/xdg-terminals.list"
+link foot/foot.ini            "$H/.config/foot/foot.ini"          # запасной терминал
 link fastfetch               "$H/.config/fastfetch"
 link fish/functions/fish_prompt.fish "$H/.config/fish/functions/fish_prompt.fish"
 link fish/conf.d/baphos.fish "$H/.config/fish/conf.d/baphos.fish"
@@ -105,6 +109,7 @@ if command -v gsettings >/dev/null 2>&1; then
   gsettings set org.gnome.desktop.interface cursor-theme BaphOS || true
   gsettings set org.gnome.desktop.interface cursor-size 16 || true
   gsettings set org.gnome.desktop.interface icon-theme BaphOS || true
+  gsettings set org.gnome.desktop.default-applications.terminal exec kitty 2>/dev/null || true
   gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark || true
   gsettings set org.gnome.desktop.interface color-scheme prefer-dark || true
   gsettings set org.gnome.desktop.interface accent-color red 2>/dev/null || true
