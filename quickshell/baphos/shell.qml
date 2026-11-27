@@ -130,6 +130,11 @@ ShellRoot {
     }
 
     IpcHandler {
+        target: "game"
+        function toggle(): void { Store.data.gameMode = !Store.data.gameMode }
+    }
+
+    IpcHandler {
         target: "altar"
         function toggle(): void { root.toggleAltar(null) }
     }

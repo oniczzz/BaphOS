@@ -43,6 +43,8 @@ Singleton {
             property bool dnd: false            // «Не беспокоить»: уведомления только в истории
             property bool nightLight: false     // ночной свет (wlsunset)
             property bool sounds: true          // звуки BaphOS (assets/sounds)
+            property bool gameMode: false       // игровой режим: без глитчей, звуков, всплывашек
+            property bool autoGameMode: true    // включать его самому, когда окно во весь экран
             property bool story: true           // сюжет (вирус культа) — только визуальный
             property int storyStage: 0          // этап заражения
             property var storySeen: []          // какие события сюжета уже были

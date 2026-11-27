@@ -126,6 +126,12 @@ FloatingWindow {
                     onToggled: v => Store.data.animations = v
                 }
                 PixelSwitch {
+                    text: "Игровой режим сам, когда окно во весь экран"
+                    hint: "игры и видео без глитчей, звуков и всплывающих уведомлений"
+                    checked: Store.data.autoGameMode
+                    onToggled: v => Store.data.autoGameMode = v
+                }
+                PixelSwitch {
                     text: "Звуки"
                     hint: "колокол уведомлений, шёпот культа, вход в систему"
                     checked: Store.data.sounds

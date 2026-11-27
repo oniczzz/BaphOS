@@ -9,7 +9,7 @@ Singleton {
     property var last: ({})
 
     function play(name) {
-        if (!Store.data.sounds) return;
+        if (!Store.data.sounds || Mode.quiet) return;
         const now = Date.now();
         if (now - (root.last[name] || 0) < 150) return;
         root.last[name] = now;

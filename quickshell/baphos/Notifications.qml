@@ -22,7 +22,7 @@ Scope {
         persistenceSupported: true
         onNotification: n => {
             Inbox.add(n.appName, n.summary, n.body);
-            if (Store.data.dnd && n.urgency !== NotificationUrgency.Critical) return;   // «Не беспокоить»
+            if ((Store.data.dnd || Mode.quiet) && n.urgency !== NotificationUrgency.Critical) return;   // «Не беспокоить» / игра
             Sfx.play("bell");
             n.tracked = true;
             n.closed.connect(() => root.remove(n));

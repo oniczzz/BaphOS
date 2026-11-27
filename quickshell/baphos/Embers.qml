@@ -9,7 +9,7 @@ PanelWindow {
     id: em
     required property var modelData
     screen: modelData
-    visible: Store.data.animations
+    visible: Store.data.animations && !Mode.quiet
     anchors { bottom: true; left: true; right: true }
     margins { bottom: Theme.barHeight - 6 }
     implicitHeight: 140

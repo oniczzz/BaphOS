@@ -133,6 +133,12 @@ PanelWindow {
                     id: win
                     required property var modelData
                     readonly property var entry: DesktopEntries.heuristicLookup(modelData.appId)
+                    // только имя приложения: «Telegram», а не «Telegram (150)»
+                    readonly property string appName: {
+                        if (entry?.name) return entry.name;
+                        const id = (modelData.appId || "").split(".").pop();
+                        return id ? id.charAt(0).toUpperCase() + id.slice(1) : (modelData.title || "?");
+                    }
                     height: tasks.height
                     width: Math.min(200, Math.max(120, (tasks.width - 3 * tasks.n) / Math.max(1, tasks.n)))
                     active: modelData.activated
@@ -151,7 +157,7 @@ PanelWindow {
                         PixelText {
                             anchors.verticalCenter: parent.verticalCenter
                             width: parent.width - 22
-                            text: win.modelData.title || win.modelData.appId
+                            text: win.appName
                             color: win.active ? Theme.scarlet : Theme.text
                             font.bold: win.active
                         }

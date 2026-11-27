@@ -192,6 +192,16 @@ PanelWindow {
                 }
 
                 // ── плитки ──
+                // игровой режим — во всю ширину
+                QuickTile {
+                    Layout.fillWidth: true
+                    icon: "gamepad"
+                    label: "Игровой режим"
+                    on: Store.data.gameMode
+                    sub: Store.data.gameMode ? "тишина: без глитчей, звуков и всплывашек"
+                       : Mode.quiet ? "сейчас сам: окно во весь экран" : "выкл — Mod+G"
+                    onClicked: Store.data.gameMode = !Store.data.gameMode
+                }
                 GridLayout {
                     Layout.fillWidth: true
                     columns: 2

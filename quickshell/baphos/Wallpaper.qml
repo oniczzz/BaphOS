@@ -45,7 +45,7 @@ PanelWindow {
     WallpaperAnim {
         anchors.fill: parent
         jsonPath: wall.shown ? Theme.asset(wall.base + ".json") : ""
-        running: Store.data.animations && !mosaic.active
+        running: Store.data.animations && !mosaic.active && !Mode.quiet
     }
 
     // ── сюжет: с этапа «Знак» на обоях проступает сигил (ступенчатое дыхание) ──
