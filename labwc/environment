@@ -1,0 +1,8 @@
+# BaphOS: окружение сессии labwc (man labwc-config, раздел ENVIRONMENT)
+XKB_DEFAULT_LAYOUT=us,ru
+XKB_DEFAULT_OPTIONS=grp:alt_shift_toggle
+XCURSOR_THEME=BaphOS
+XCURSOR_SIZE=16
+MOZ_ENABLE_WAYLAND=1
+ELECTRON_OZONE_PLATFORM_HINT=auto
+XDG_CURRENT_DESKTOP=labwc:wlroots

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- BaphOS: меню по правому клику на рабочем столе -->
+<openbox_menu>
+  <menu id="root-menu" label="BaphOS">
+    <item label="Терминал"><action name="Execute" command="foot" /></item>
+    <item label="Файлы"><action name="Execute" command="nautilus" /></item>
+    <item label="Браузер"><action name="Execute" command="helium-browser" /></item>
+    <separator />
+    <item label="Steam"><action name="Execute" command="steam" /></item>
+    <item label="Discord"><action name="Execute" command="discord" /></item>
+    <item label="Telegram"><action name="Execute" command="Telegram" /></item>
+    <separator />
+    <item label="Мониторы"><action name="Execute" command="wdisplays" /></item>
+    <item label="Перечитать настройки"><action name="Reconfigure" /></item>
+    <item label="Выйти"><action name="Exit" /></item>
+  </menu>
+</openbox_menu>

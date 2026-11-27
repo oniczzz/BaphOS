@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=BaphOS
+Comment=BaphOS: labwc + Quickshell
+Exec=labwc
+Type=Application
+DesktopNames=labwc;wlroots
