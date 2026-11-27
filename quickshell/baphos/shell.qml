@@ -15,6 +15,7 @@ ShellRoot {
         if (startOpen && (!screen || screen === startScreen)) { startOpen = false; return; }
         startScreen = screen || focusedScreen() || Quickshell.screens[0];
         startOpen = true;
+        Story.onStartOpened();
     }
 
     // экран под фокусом niri — из имени активного выхода
@@ -49,6 +50,7 @@ ShellRoot {
         open: root.startOpen
         onCloseRequested: root.startOpen = false
         onLockRequested: lock.lock()
+        onLaunched: Story.onLaunched()
         onSettingsRequested: { root.startOpen = false; root.settingsOpen = true; }
     }
 
@@ -61,6 +63,33 @@ ShellRoot {
         screen: root.focusedScreen() || Quickshell.screens[0]
         open: root.keysOpen
         onDismissed: root.keysOpen = false
+    }
+
+    StoryOverlay {
+        screen: root.focusedScreen() || Quickshell.screens[0]
+    }
+
+    RitualWindow {
+        open: Story.ritualOpen
+        onDismissed: Story.ritualOpen = false
+    }
+
+    BasementWindow {
+        open: Story.basementOpen
+        onDismissed: Story.basementOpen = false
+    }
+
+    // сюжет: показать/проверить (qs -c baphos ipc call story <функция>)
+    IpcHandler {
+        target: "story"
+        function stage(n: int): void { Store.data.storyStage = Math.max(0, Math.min(5, n)); Store.data.stageMinutes = 0 }
+        function ritual(n: int): void { Story.offerRitual(Math.max(1, Math.min(3, n))) }
+        function glitch(n: int): void { Story.glitch(n) }
+        function whisper(): void { Story.say() }
+        function basement(): void { Story.basementOpen = true }
+        function lamb(): void { Story.lambWalk() }
+        function intro(): void { Story.intro() }
+        function close(): void { Story.ritualOpen = false; Story.basementOpen = false }
     }
 
     IpcHandler {

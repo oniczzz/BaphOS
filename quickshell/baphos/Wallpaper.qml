@@ -48,6 +48,18 @@ PanelWindow {
         running: Store.data.animations && !mosaic.active
     }
 
+    // ── сюжет: с этапа «Знак» на обоях проступает сигил (ступенчатое дыхание) ──
+    Image {
+        anchors.centerIn: parent
+        visible: Story.stage >= 3
+        source: Theme.asset("sigil/sigil-128.png")
+        width: 512; height: 512
+        smooth: false
+        property int ph: 0
+        opacity: [0.04, 0.06, 0.08, 0.10, 0.08, 0.06][ph]
+        Timer { interval: 400; repeat: true; running: parent.visible && Store.data.animations; onTriggered: parent.ph = (parent.ph + 1) % 6 }
+    }
+
     // ── мозаика ──
     Item {
         id: mosaic

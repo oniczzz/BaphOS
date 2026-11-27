@@ -15,6 +15,10 @@ Singleton {
     function resetStory() {
         adapter.storyStage = 0;
         adapter.storySeen = [];
+        adapter.storyMinutes = 0;
+        adapter.stageMinutes = 0;
+        adapter.launches = 0;
+        adapter.startOpens = 0;
     }
 
     function nextWallpaper() {
@@ -39,6 +43,10 @@ Singleton {
             property bool story: true           // сюжет (вирус культа) — только визуальный
             property int storyStage: 0          // этап заражения
             property var storySeen: []          // какие события сюжета уже были
+            property int storyMinutes: 0        // минуты сюжета всего
+            property int stageMinutes: 0        // минуты на текущем этапе
+            property int launches: 0            // запуски программ из Пуска
+            property int startOpens: 0          // сколько раз открыт Пуск
         }
     }
 }

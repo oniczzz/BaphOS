@@ -15,6 +15,7 @@ PanelWindow {
     signal closeRequested()
     signal lockRequested()
     signal settingsRequested()
+    signal launched()
 
     // видимость живёт дольше open — чтобы успела проиграться анимация закрытия
     property bool shown: false
@@ -95,6 +96,7 @@ PanelWindow {
     function launch(entry) {
         if (!entry) return;
         entry.execute();
+        menuWin.launched();
         menuWin.closeRequested();
     }
 
@@ -185,7 +187,7 @@ PanelWindow {
                                 font.family: Theme.fontGothic; font.pixelSize: 48
                                 renderType: Text.NativeRendering
                             }
-                            PixelText { text: (Quickshell.env("USER") ?? "") + " · служитель"; color: Theme.dim }
+                            PixelText { text: (Quickshell.env("USER") ?? "") + " · " + Story.label("user", "служитель"); color: Theme.dim }
                         }
                     }
                 }
@@ -212,7 +214,7 @@ PanelWindow {
                         Keys.onUpPressed: list.decrementCurrentIndex()
                         Keys.onReturnPressed: menuWin.launch(menuWin.apps[list.currentIndex])
                         Keys.onEnterPressed: menuWin.launch(menuWin.apps[list.currentIndex])
-                        PixelText { visible: !search.text; text: "Призвать...   ?поиск   >команда"; color: Theme.dim; anchors.verticalCenter: parent.verticalCenter }
+                        PixelText { visible: !search.text; text: Story.label("search", "Призвать...   ?поиск   >команда"); color: Theme.dim; anchors.verticalCenter: parent.verticalCenter }
                     }
                 }
 
@@ -290,7 +292,7 @@ PanelWindow {
                     Repeater {
                         model: [
                             { label: "Замок", icon: "lock", confirm: false, cmd: null },
-                            { label: "Выход", icon: "logout", confirm: true, cmd: ["niri", "msg", "action", "quit", "--skip-confirmation"] },
+                            { label: Story.label("logout", "Выход"), icon: "logout", confirm: true, cmd: ["niri", "msg", "action", "quit", "--skip-confirmation"] },
                             { label: "Заново", icon: "reload", confirm: true, cmd: ["systemctl", "reboot"] },
                             { label: "Уснуть", icon: "power", confirm: true, cmd: ["systemctl", "poweroff"] },
                         ]

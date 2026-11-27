@@ -361,6 +361,8 @@ window-rule {
 // окно Настроек BaphOS — плавающее, по центру
 window-rule {
     match title="^BaphOS — Настройки$"
+    match title="^Ритуал$"
+    match title="^Подвал$"
     open-floating true
 }
 

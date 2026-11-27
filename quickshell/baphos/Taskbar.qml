@@ -52,7 +52,7 @@ PanelWindow {
                     width: 32; height: 32; smooth: false
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                PixelText { text: "Пуск"; color: Theme.scarlet; font.bold: true; anchors.verticalCenter: parent.verticalCenter }
+                PixelText { text: Story.label("start", "Пуск"); color: Theme.scarlet; font.bold: true; anchors.verticalCenter: parent.verticalCenter }
             }
         }
 
