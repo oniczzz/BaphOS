@@ -379,7 +379,7 @@ binds {
     Mod+Shift+S hotkey-overlay-title="Steam" { spawn "steam"; }
     Mod+Shift+D hotkey-overlay-title="Discord" { spawn "discord"; }
     Mod+Shift+G hotkey-overlay-title="Telegram" { spawn "Telegram"; }
-    Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
+    Mod+D hotkey-overlay-title="Пуск" { spawn "qs" "-c" "baphos" "ipc" "call" "start" "toggle"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
