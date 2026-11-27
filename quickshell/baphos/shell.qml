@@ -141,6 +141,12 @@ ShellRoot {
     }
 
     IpcHandler {
+        target: "window"
+        function minimize(): void { Niri.minimize(Niri.windows.find(w => w.is_focused) || null) }
+        function restore(): void { const id = Niri.minimized[Niri.minimized.length - 1]; Niri.restore(Niri.windows.find(w => w.id === id) || null) }
+    }
+
+    IpcHandler {
         target: "game"
         function toggle(): void { Store.data.gameMode = !Store.data.gameMode }
     }

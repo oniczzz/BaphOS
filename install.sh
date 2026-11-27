@@ -120,6 +120,8 @@ if command -v gsettings >/dev/null 2>&1; then
   gsettings set org.gnome.desktop.interface icon-theme BaphOS || true
   gsettings set org.gnome.desktop.default-applications.terminal exec kitty 2>/dev/null || true
   gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark || true
+  # кнопки заголовка: на весь экран и закрыть («свернуть» в niri нет — сворачивает панель задач)
+  gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:maximize,close' || true
   gsettings set org.gnome.desktop.interface color-scheme prefer-dark || true
   gsettings set org.gnome.desktop.interface accent-color red 2>/dev/null || true
   gsettings set org.gnome.desktop.interface font-name 'Monocraft 12' || true

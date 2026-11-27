@@ -142,8 +142,13 @@ PanelWindow {
                     height: tasks.height
                     width: Math.min(200, Math.max(120, (tasks.width - 3 * tasks.n) / Math.max(1, tasks.n)))
                     active: modelData.activated
+                    readonly property var nw: Niri.windowFor(modelData.appId, modelData.title)
+                    readonly property bool minimized: Niri.isMinimized(nw)
+                    opacity: minimized ? 0.55 : 1
                     onClicked: mouse => {
                         if (mouse.button === Qt.MiddleButton) modelData.close();
+                        else if (mouse.button === Qt.LeftButton && minimized) Niri.restore(nw);       // свёрнуто — вернуть
+                        else if (mouse.button === Qt.LeftButton && modelData.activated && nw) Niri.minimize(nw);  // активно — свернуть
                         else if (mouse.button === Qt.RightButton) {
                             // правый клик: закрепить в ленту / освободить (плавающее) — как Win+V
                             modelData.activate();

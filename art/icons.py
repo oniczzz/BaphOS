@@ -422,12 +422,88 @@ icon(["drive-harddisk", "drive-harddisk-system", "drive-removable-media", "media
     "................",
 ])
 
+# ── кнопки окна в заголовке (GTK, Chromium/Helium): пиксельные ────────────────
+icon(["window-close-symbolic", "window-close"], [
+    "................",
+    "................",
+    "................",
+    "...ww......ww...",
+    "...www....www...",
+    "....www..www....",
+    ".....wwwwww.....",
+    "......wwww......",
+    "......wwww......",
+    ".....wwwwww.....",
+    "....www..www....",
+    "...www....www...",
+    "...ww......ww...",
+    "................",
+    "................",
+    "................",
+])
+icon(["window-maximize-symbolic", "window-maximize"], [
+    "................",
+    "................",
+    "................",
+    "...wwwwwwwwww...",
+    "...wwwwwwwwww...",
+    "...w........w...",
+    "...w........w...",
+    "...w........w...",
+    "...w........w...",
+    "...w........w...",
+    "...w........w...",
+    "...wwwwwwwwww...",
+    "................",
+    "................",
+    "................",
+    "................",
+])
+icon(["window-restore-symbolic", "window-restore"], [
+    "................",
+    "................",
+    "................",
+    ".....wwwwwwww...",
+    ".....wwwwwwww...",
+    ".....w......w...",
+    "...wwwwwwww.w...",
+    "...wwwwwwww.w...",
+    "...w......w.w...",
+    "...w......www...",
+    "...w......w.....",
+    "...w......w.....",
+    "...wwwwwwww.....",
+    "................",
+    "................",
+    "................",
+])
+icon(["window-minimize-symbolic", "window-minimize"], [
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "...wwwwwwwwww...",
+    "...wwwwwwwwww...",
+    "................",
+    "................",
+    "................",
+    "................",
+])
+
 SIZES = (16, 32, 48, 64)
-CONTEXTS = {"apps": "Applications", "places": "Places", "mimetypes": "MimeTypes"}
+CONTEXTS = {"apps": "Applications", "places": "Places", "mimetypes": "MimeTypes", "actions": "Actions"}
 
 
 def context(names):
     n = names[0]
+    if n.startswith("window-"):
+        return "actions"
     if n.startswith(("folder", "user-", "inode", "drive", "trash")):
         return "places"
     if "-x-" in n or n.startswith(("text-", "image-x", "video-x", "audio-x", "package-")):
@@ -458,6 +534,20 @@ def main(out):
             dirs.append((size, ctx))
     count = 0
     for names, rows in ICONS.items():
+        if names[0].endswith("-symbolic"):
+            # GTK берёт «-symbolic» только из SVG и сам перекрашивает его в цвет текста;
+            # рисуем пиксели квадратиками точно по сетке 16x16 — значок остаётся пиксельным
+            rects = "".join(f'<rect x="{x}" y="{y}" width="1" height="1"/>'
+                            for y, row in enumerate(rows) for x, ch in enumerate(row) if ch != ".")
+            for size in SIZES:
+                d = out / f"{size}x{size}" / context(names)
+                svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 16 16" '
+                       f'shape-rendering="crispEdges"><g fill="#bebebe">{rects}</g></svg>')
+                for old in d.glob(f"{names[0]}.png"):
+                    old.unlink()
+                (d / f"{names[0]}.svg").write_text(svg)
+            count += 1
+            continue
         base = render(rows)
         ctx = context(names)
         for size in SIZES:

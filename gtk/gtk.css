@@ -94,3 +94,58 @@ scrollbar slider {
 scrollbar slider:hover {
   background-color: #ff1a1a;
 }
+
+/* ── кнопки заголовка окна: пиксельные квадраты (значки — тема BaphOS) ── */
+headerbar button.titlebutton,
+.titlebar button.titlebutton,
+windowcontrols button {
+  min-width: 24px;
+  min-height: 24px;
+  padding: 2px;
+  margin: 0 1px;
+  border-radius: 0;
+  border: 2px solid transparent;
+  background: transparent;
+  box-shadow: none;
+}
+windowcontrols button > image {
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+headerbar button.titlebutton:hover,
+.titlebar button.titlebutton:hover,
+windowcontrols button:hover {
+  background: #3a0000;
+  border-color: #6b0000;
+}
+headerbar button.titlebutton.close:hover,
+.titlebar button.titlebutton.close:hover,
+windowcontrols button.close:hover {
+  background: #ff1a1a;
+  border-color: #ff1a1a;
+}
+headerbar button.titlebutton:active,
+windowcontrols button:active {
+  background: #6b0000;
+  border-color: #ff1a1a;
+}
+
+/* пиксельные значки кнопок заголовка — прямо из темы BaphOS (путь от ~/.config/gtk-*.0/) */
+windowcontrols button.close > image,
+headerbar button.titlebutton.close > image {
+  -gtk-icon-source: url("../../.local/share/icons/BaphOS/16x16/actions/window-close.png");
+}
+windowcontrols button.maximize > image,
+headerbar button.titlebutton.maximize > image {
+  -gtk-icon-source: url("../../.local/share/icons/BaphOS/16x16/actions/window-maximize.png");
+}
+window.maximized windowcontrols button.maximize > image,
+.maximized headerbar button.titlebutton.maximize > image {
+  -gtk-icon-source: url("../../.local/share/icons/BaphOS/16x16/actions/window-restore.png");
+}
+windowcontrols button.minimize > image,
+headerbar button.titlebutton.minimize > image {
+  -gtk-icon-source: url("../../.local/share/icons/BaphOS/16x16/actions/window-minimize.png");
+}
