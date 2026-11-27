@@ -403,6 +403,7 @@ binds {
     Mod+Shift+D hotkey-overlay-title="Discord" { spawn "discord"; }
     Mod+Shift+G hotkey-overlay-title="Telegram" { spawn "Telegram"; }
     Mod+D hotkey-overlay-title="Пуск" { spawn "qs" "-c" "baphos" "ipc" "call" "start" "toggle"; }
+    Mod+N hotkey-overlay-title="Алтарь" { spawn "qs" "-c" "baphos" "ipc" "call" "altar" "toggle"; }
     Mod+S hotkey-overlay-title="Настройки BaphOS" { spawn "qs" "-c" "baphos" "ipc" "call" "settings" "toggle"; }
     Mod+Shift+W hotkey-overlay-title="Сменить обои" { spawn "qs" "-c" "baphos" "ipc" "call" "wallpaper" "next"; }
 

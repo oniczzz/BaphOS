@@ -9,11 +9,21 @@ ShellRoot {
     property bool startOpen: false
     property bool settingsOpen: false
     property bool keysOpen: false
+    property bool altarOpen: false
+    property var altarScreen: Quickshell.screens[0]
+
+    function toggleAltar(screen) {
+        if (altarOpen && (!screen || screen === altarScreen)) { altarOpen = false; return; }
+        altarScreen = screen || focusedScreen() || Quickshell.screens[0];
+        startOpen = false;
+        altarOpen = true;
+    }
     property var startScreen: Quickshell.screens[0]
 
     function toggleStart(screen) {
         if (startOpen && (!screen || screen === startScreen)) { startOpen = false; return; }
         startScreen = screen || focusedScreen() || Quickshell.screens[0];
+        altarOpen = false;
         startOpen = true;
         Story.onStartOpened();
     }
@@ -36,7 +46,21 @@ ShellRoot {
         Taskbar {
             startOpen: root.startOpen && root.startScreen === modelData
             onStartClicked: root.toggleStart(modelData)
+            altarOpen: root.altarOpen && root.altarScreen === modelData
+            onAltarClicked: root.toggleAltar(modelData)
         }
+    }
+
+    Variants {
+        model: Quickshell.screens
+        Embers {}
+    }
+
+    ControlCenter {
+        screen: root.altarScreen
+        open: root.altarOpen
+        onCloseRequested: root.altarOpen = false
+        onLockRequested: lock.lock()
     }
 
     Notifications {
@@ -90,6 +114,11 @@ ShellRoot {
         function lamb(): void { Story.lambWalk() }
         function intro(): void { Story.intro() }
         function close(): void { Story.ritualOpen = false; Story.basementOpen = false }
+    }
+
+    IpcHandler {
+        target: "altar"
+        function toggle(): void { root.toggleAltar(null) }
     }
 
     IpcHandler {
