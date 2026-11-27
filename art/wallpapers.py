@@ -5,6 +5,7 @@
 Запуск: python3 art/wallpapers.py <папка> [ШxВ ...]   (по умолчанию 1920x1080 1366x768 2560x1440)
 Результат: <папка>/<сцена>-<Ш>x<В>.png и превью <папка>/preview-<сцена>.png
 """
+import json
 import math
 import random
 import sys
@@ -15,6 +16,7 @@ from PIL import Image, ImageDraw
 from sigil import sigil as draw_sigil
 
 K = 4  # во сколько раз увеличивать
+STATIC_FLAMES = False  # True только для превью README
 
 # Палитра (от тёмного к светлому — порядок важен: «свет» рисуется только поверх более тёмного)
 BLACK, NEAR, VOID, ASHDK, DRIED, DEEP, BLOOD, CRIMSON, ASH, SCARLET, BONE = range(11)
@@ -37,6 +39,8 @@ class Canvas:
     def __init__(self, w, h, fill=BLACK):
         self.w, self.h = w, h
         self.px = [[fill] * w for _ in range(h)]
+        # что оживает поверх картинки (координаты в пикселях сцены) — см. quickshell/baphos/WallpaperAnim.qml
+        self.anim = {"stars": [], "flames": [], "eyes": [], "pulse": [], "fliers": []}
 
     def set(self, x, y, c):
         if 0 <= x < self.w and 0 <= y < self.h:
@@ -112,6 +116,8 @@ def stars(cv, rnd, y_max, n):
         x, y = rnd.randrange(cv.w), rnd.randrange(int(y_max))
         c = rnd.choice([ASHDK, ASHDK, ASH, ASH, BONE])
         cv.light(x, y, c)
+        if c != ASHDK and len(cv.anim["stars"]) < 60:
+            cv.anim["stars"].append([x, y])
         if c == BONE and rnd.random() < 0.35:            # крестик-мерцание
             for ddx, ddy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
                 cv.light(x + ddx, y + ddy, ASHDK)
@@ -217,11 +223,15 @@ def figure(cv, fx, fy, k, light):
                 for a in range(k):
                     for b in range(k):
                         cv.set(x0 + xx * k + a, y0 + yy * k + b, SCARLET if ch == "E" else BLACK)
+                if ch == "E":
+                    cv.anim["eyes"].append([x0 + xx * k, y0 + yy * k, k, k])
 
 
 def candle(cv, x, y):
     cv.glow(x + 1, y + 1, 9, [BLACK, DRIED, DEEP, BLOOD])
-    cv.sprite(CANDLE, x, y, {"F": SCARLET, "W": BONE, "C": ASH})
+    # пламя рисует оболочка (кадры anim/flame-*), в картинке — только для превью
+    cv.sprite(CANDLE, x, y, {"F": SCARLET, "W": BONE, "C": ASH} if STATIC_FLAMES else {"C": ASH})
+    cv.anim["flames"].append([x, y])
 
 
 def paste_sigil(cv, cx, cy, size, color=SCARLET):
@@ -278,6 +288,7 @@ def crimson_moon(w, h, rnd):
     for wx in (cx - 8, cx + 4):                                                          # окна
         cv.mask(lambda d, wx=wx: d.rectangle([wx, gy - 18, wx + 3, gy - 10], fill=1), BLOOD)
         cv.set(wx + 1, gy - 19, BLOOD); cv.set(wx + 2, gy - 19, BLOOD)
+    cv.anim["fliers"] = ["bat", int(h * 0.08), int(h * 0.45)]
     # мёртвые деревья
     for x in (int(w * 0.42), int(w * 0.88), int(w * 0.95)):
         dead_tree(cv, rnd, x, near[x], rnd.randint(int(h * 0.22), int(h * 0.32)))
@@ -375,6 +386,7 @@ def forest(w, h, rnd):
         if all(cv.get(x + dx, y + dy) in (BLACK, NEAR, VOID) for dx in range(-2, 8) for dy in (-1, 0, 1)):
             for ex in (x, x + 4):
                 cv.set(ex, y, SCARLET); cv.set(ex + 1, y, CRIMSON)
+            cv.anim["eyes"].append([x, y, 6, 1])
             placed += 1
     return cv
 
@@ -416,6 +428,7 @@ def cathedral(w, h, rnd):
     ry = int(h * 0.40)
     cv.glow(cx, ry, rr * 1.6, [BLACK, DRIED, DEEP, BLOOD])
     paste_sigil(cv, cx, ry, rr * 2 + 1)
+    cv.anim["pulse"].append([cx - rr, ry - rr, rr * 2 + 1, rr * 2 + 1])
     # стрельчатые окна
     for k in (-2, -1, 1, 2):
         x = cx + k * (bw // 6)
@@ -424,7 +437,8 @@ def cathedral(w, h, rnd):
     # врата
     cv.mask(lambda d: d.rectangle([cx - 6, int(h * 0.80), cx + 6, h], fill=1), DEEP)
     cv.mask(lambda d: d.polygon([(cx - 6, int(h * 0.80)), (cx, int(h * 0.75)), (cx + 6, int(h * 0.80))], fill=1), DEEP)
-    # вороны
+    # вороны (и пролетающие — в анимации)
+    cv.anim["fliers"] = ["raven", int(h * 0.05), int(h * 0.35)]
     for _ in range(9):
         x, y = rnd.randint(0, w), rnd.randint(int(h * 0.05), int(h * 0.35))
         cv.sprite(["#...#", ".#.#.", "..#.."], x, y, {"#": BLACK})
@@ -442,12 +456,39 @@ def sigil_wall(w, h, rnd):
         for x in range(w):
             if cv.px[y][x] in (VOID, DRIED):
                 cv.px[y][x] -= 1
+    cv.anim["glitch"] = True
     # осыпающиеся пиксели по краям
     for _ in range(w * h // 250):
         x, y = rnd.randrange(w), rnd.randrange(h)
         if cv.get(x, y) == BLACK:
             cv.set(x, y, rnd.choice((NEAR, VOID, DRIED)))
     return cv
+
+
+# спрайты анимации (рисуются в assets/wallpapers/anim/, увеличены x4)
+SPRITES = {
+    "flame-0": [".F.", "FWF", ".F."],
+    "flame-1": ["F..", "FWF", ".F."],
+    "flame-2": ["..F", "FWF", ".F."],
+    "flame-3": [".F.", ".W.", ".F."],
+    "bat-0": ["#.....#", "##...##", ".#####.", "..#.#.."],
+    "bat-1": ["..#.#..", ".#####.", "#.....#", "......."],
+    "raven-0": ["#...#", ".#.#.", "..#.."],
+    "raven-1": [".....", "#####", "..#.."],
+}
+SPRITE_COLORS = {"F": PAL[SCARLET], "W": PAL[BONE], "#": PAL[BLACK]}
+
+
+def write_sprites(out):
+    d = out / "anim"
+    d.mkdir(parents=True, exist_ok=True)
+    for name, rows in SPRITES.items():
+        img = Image.new("RGBA", (len(rows[0]), len(rows)), (0, 0, 0, 0))
+        for y, row in enumerate(rows):
+            for x, ch in enumerate(row):
+                if ch in SPRITE_COLORS:
+                    img.putpixel((x, y), SPRITE_COLORS[ch] + (255,))
+        img.resize((img.width * K, img.height * K), Image.NEAREST).save(d / f"{name}.png")
 
 
 SCENES = {
@@ -459,11 +500,27 @@ SCENES = {
 }
 
 
-def render(fn, name, W, H):
+def render(fn, name, W, H, with_anim=False):
     w, h = -(-W // K), -(-H // K)        # вверх, затем обрезка
     rnd = random.Random(f"baphos-{name}")   # одна и та же картинка при каждой сборке
-    img = fn(w, h, rnd).image().resize((w * K, h * K), Image.NEAREST)
-    return img.crop(((w * K - W) // 2, (h * K - H) // 2, (w * K - W) // 2 + W, (h * K - H) // 2 + H))
+    cv = fn(w, h, rnd)
+    ox, oy = (w * K - W) // 2, (h * K - H) // 2
+    img = cv.image().resize((w * K, h * K), Image.NEAREST).crop((ox, oy, ox + W, oy + H))
+    if not with_anim:
+        return img
+    # координаты сцены -> пиксели экрана (x4 и сдвиг обрезки)
+    a = cv.anim
+    pt = lambda x, y: [x * K - ox, y * K - oy]
+    anim = {
+        "scale": K,
+        "stars": [pt(x, y) for x, y in a["stars"]],
+        "flames": [pt(x, y) for x, y in a["flames"]],
+        "eyes": [pt(x, y) + [ww * K, hh * K] for x, y, ww, hh in a["eyes"]],
+        "pulse": [pt(x, y) + [ww * K, hh * K] for x, y, ww, hh in a["pulse"]],
+        "fliers": ([a["fliers"][0], a["fliers"][1] * K - oy, a["fliers"][2] * K - oy] if a["fliers"] else []),
+        "glitch": bool(a.get("glitch")),
+    }
+    return img, anim
 
 
 def main(out, sizes):
@@ -471,9 +528,15 @@ def main(out, sizes):
     out.mkdir(parents=True, exist_ok=True)
     for name, fn in SCENES.items():
         for (W, H) in sizes:
-            render(fn, name, W, H).save(out / f"{name}-{W}x{H}.png", optimize=True)
+            img, anim = render(fn, name, W, H, with_anim=True)
+            img.save(out / f"{name}-{W}x{H}.png", optimize=True)
+            (out / f"{name}-{W}x{H}.json").write_text(json.dumps(anim))
         # превью — настоящие 1920x1080, уменьшенные ровно вдвое (пиксели 4x4 -> 2x2, без размытия)
+        global STATIC_FLAMES
+        STATIC_FLAMES = True
         render(fn, name, 1920, 1080).resize((960, 540), Image.NEAREST).save(out / f"preview-{name}.png")
+        STATIC_FLAMES = False
+    write_sprites(out)
     print(f"wallpapers: {len(SCENES)} сцен x {len(sizes)} размеров -> {out}")
 
 

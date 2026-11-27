@@ -29,6 +29,7 @@ Singleton {
         JsonAdapter {
             id: adapter
             property string wallpaper: "crimson-moon"
+            property bool animations: true      // живые обои и мозаика
         }
     }
 }
