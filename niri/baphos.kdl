@@ -356,6 +356,17 @@ window-rule {
     clip-to-geometry true
 }
 
+// обои BaphOS видны и в обзоре (Mod+O)
+layer-rule {
+    match namespace="^baphos-wallpaper$"
+    place-within-backdrop true
+}
+
+// пиксельные значки BaphOS в оболочке (Пуск, панель)
+environment {
+    QS_ICON_THEME "BaphOS"
+}
+
 binds {
     // Keys consist of modifiers separated by + signs, followed by an XKB key name
     // in the end. To find an XKB name for a particular key, you may use a program
@@ -380,6 +391,7 @@ binds {
     Mod+Shift+D hotkey-overlay-title="Discord" { spawn "discord"; }
     Mod+Shift+G hotkey-overlay-title="Telegram" { spawn "Telegram"; }
     Mod+D hotkey-overlay-title="Пуск" { spawn "qs" "-c" "baphos" "ipc" "call" "start" "toggle"; }
+    Mod+Shift+W hotkey-overlay-title="Сменить обои" { spawn "qs" "-c" "baphos" "ipc" "call" "wallpaper" "next"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.

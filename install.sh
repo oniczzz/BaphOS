@@ -36,11 +36,13 @@ link() { # link <в репо> <куда>
 
 say "рисую графику (Pillow, nearest-neighbor)"
 cd "$REPO"
-python3 art/cursor.py assets/cursors/BaphOS
+python3 art/cursor.py assets/icons/BaphOS
+python3 art/icons.py assets/icons/BaphOS          # после курсора: пишет общий index.theme
 [[ -f art/sigil.py ]] && python3 art/sigil.py assets/sigil
 [[ -f art/wallpapers.py ]] && python3 art/wallpapers.py assets/wallpapers
 
-link assets/cursors/BaphOS   "$H/.local/share/icons/BaphOS"
+link assets/icons/BaphOS     "$H/.local/share/icons/BaphOS"
+mkdir -p -- "$H/.local/state/baphos"          # настройки оболочки (обои, сюжет)
 link quickshell/baphos       "$H/.config/quickshell/baphos"
 
 # niri: свой config.kdl с include BaphOS; мониторы остаются в monitor.kdl
@@ -63,6 +65,7 @@ niri validate -c "$NIRI" >/dev/null 2>&1 && say "niri validate: ok" || { say "ni
 if command -v gsettings >/dev/null 2>&1; then
   gsettings set org.gnome.desktop.interface cursor-theme BaphOS || true
   gsettings set org.gnome.desktop.interface cursor-size 16 || true
+  gsettings set org.gnome.desktop.interface icon-theme BaphOS || true
 fi
 
 say "готово. niri перечитает конфиг сам; оболочка: qs -c baphos (стартует с niri)"

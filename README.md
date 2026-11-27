@@ -6,7 +6,26 @@
 
 > В разработке: этапы — база niri → панель задач и Пуск → обои и сигил → темы → сюжет.
 
+![Багровая луна](assets/wallpapers/preview-crimson-moon.png)
+
+| | |
+|---|---|
+| ![Ритуал](assets/wallpapers/preview-ritual.png) | ![Лес](assets/wallpapers/preview-forest.png) |
+| ![Собор](assets/wallpapers/preview-cathedral.png) | ![Сигил](assets/wallpapers/preview-sigil.png) |
+
+![Значки](assets/previews/icons.png)
+
 ![Пуск](assets/previews/start-menu.png)
+
+## Графика
+
+Всё рисуется кодом в `art/`: палитра из 11 цветов, переходы — упорядоченный дизеринг (Байер 4x4),
+сцены в разрешении экрана / 4 и увеличение x4 без сглаживания — под каждый размер экрана своя картинка.
+
+- **Обои** (`art/wallpapers.py`): Багровая луна, Ритуал, Лес, Собор, Сигил. Сменить — `Mod+Shift+W`.
+- **Сигил** (`art/sigil.py`): двойной круг, перевёрнутая пентаграмма, козлиная голова.
+- **Значки** (`art/icons.py`): тема BaphOS, 16 px (+32/48/64), программы и папки; остальное — из Adwaita.
+- **Курсор** (`art/cursor.py`): 16 px.
 
 ## Панель задач и Пуск
 
@@ -35,10 +54,10 @@ cd ~/projects/BaphOS
 ## Состав
 
 ```
-art/          генераторы графики: pixel.py (палитра), cursor.py, sigil.py
+art/          генераторы графики: pixel.py, cursor.py, sigil.py, wallpapers.py, icons.py
 niri/         baphos.kdl — оформление, анимации, клавиши
-quickshell/   оболочка BaphOS: shell.qml, Taskbar, StartMenu, Theme (палитра), Niri (события niri)
-assets/       курсор BaphOS (16 px), сигил, превью
+quickshell/   оболочка BaphOS: shell.qml, Taskbar, StartMenu, Wallpaper, Theme, Store (настройки), Niri
+assets/       icons/BaphOS (значки + курсор), wallpapers/, sigil/, превью
 ```
 
 ## Лицензия

@@ -23,6 +23,11 @@ ShellRoot {
 
     Variants {
         model: Quickshell.screens
+        Wallpaper {}
+    }
+
+    Variants {
+        model: Quickshell.screens
         Taskbar {
             startOpen: root.startOpen && root.startScreen === modelData
             onStartClicked: root.toggleStart(modelData)
@@ -33,6 +38,12 @@ ShellRoot {
         screen: root.startScreen
         open: root.startOpen
         onCloseRequested: root.startOpen = false
+    }
+
+    IpcHandler {
+        target: "wallpaper"
+        function next(): void { Store.nextWallpaper() }
+        function set(name: string): void { if (Store.wallpapers.includes(name)) Store.data.wallpaper = name }
     }
 
     IpcHandler {

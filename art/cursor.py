@@ -174,8 +174,8 @@ def main(out):
     out = Path(out)
     cdir = out / "cursors"
     cdir.mkdir(parents=True, exist_ok=True)
-    (out / "index.theme").write_text(
-        "[Icon Theme]\nName=BaphOS\nComment=BaphOS pixel cursor (16 px)\nInherits=Adwaita\n")
+    if not (out / "index.theme").exists():          # общий index.theme пишет art/icons.py
+        (out / "index.theme").write_text("[Icon Theme]\nName=BaphOS\nInherits=Adwaita\n")
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         for i, (mask, (hx, hy), names) in enumerate(cursors()):
@@ -199,4 +199,4 @@ def main(out):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "assets/cursors/BaphOS")
+    main(sys.argv[1] if len(sys.argv) > 1 else "assets/icons/BaphOS")
