@@ -38,12 +38,13 @@ ShellRoot {
         screen: root.focusedScreen() || Quickshell.screens[0]
     }
 
-    Lock {}
+    Lock { id: lock }
 
     StartMenu {
         screen: root.startScreen
         open: root.startOpen
         onCloseRequested: root.startOpen = false
+        onLockRequested: lock.lock()
     }
 
     IpcHandler {

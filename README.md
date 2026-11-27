@@ -42,7 +42,7 @@ cd ~/projects/BaphOS
 ./install.sh
 ```
 
-Пакеты: `niri quickshell python-pillow xorg-xcursorgen`, шрифт `cozette-otb` (AUR).
+Пакеты: `niri quickshell python-pillow xorg-xcursorgen librsvg foot fastfetch adw-gtk-theme qt6ct`, шрифт `cozette-otb` (AUR).
 
 `install.sh` трогает только `~/.config` и `~/.local/share`:
 - `~/.config/niri/config.kdl` становится коротким файлом: `include` BaphOS и `include "monitor.kdl"`.
@@ -62,4 +62,10 @@ assets/       icons/BaphOS (значки + курсор), wallpapers/, sigil/, �
 
 ## Лицензия
 
-MIT. Шрифт Cozette — отдельный пакет (MIT), в репозиторий не входит.
+Код и графика BaphOS — MIT. Чужое, с лицензиями рядом:
+
+- шрифты в `fonts/` — SIL Open Font License 1.1: [Pixelify Sans](https://github.com/eifetx/Pixelify-Sans),
+  [Jacquard 24](https://github.com/scfried/soft-type-jacquard), [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P)
+  (взяты из [google/fonts](https://github.com/google/fonts));
+- иконки интерфейса `assets/ui/pixelarticons` — [Pixelarticons](https://github.com/halfmage/pixelarticons), MIT, перекрашены в палитру;
+- терминальный шрифт Cozette — пакет `cozette-otb` (MIT), в репозиторий не входит.

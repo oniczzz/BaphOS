@@ -1,5 +1,5 @@
-// BaphOS: меню «Пуск» — поиск по приложениям, питание. Прозрачный слой на весь экран:
-// клик мимо меню закрывает его, Esc тоже.
+// BaphOS: меню «Пуск» в стиле Win98 — готическая полоса слева, поиск, список, питание.
+// Прозрачный слой на весь экран: клик мимо меню закрывает его, Esc тоже.
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -10,6 +10,7 @@ PanelWindow {
     id: menuWin
     property bool open: false
     signal closeRequested()
+    signal lockRequested()
 
     visible: open
     anchors { top: true; bottom: true; left: true; right: true }
@@ -21,7 +22,6 @@ PanelWindow {
 
     onOpenChanged: if (open) { search.text = ""; list.currentIndex = 0; search.forceActiveFocus(); }
 
-    // все видимые приложения, по алфавиту
     readonly property var allApps: DesktopEntries.applications.values
         .filter(e => !e.noDisplay)
         .sort((a, b) => a.name.localeCompare(b.name))
@@ -41,40 +41,72 @@ PanelWindow {
 
     MouseArea { anchors.fill: parent; onClicked: menuWin.closeRequested() }
 
-    Rectangle {
+    Bevel {
         id: panel
-        width: 380; height: 500
-        anchors { left: parent.left; bottom: parent.bottom; leftMargin: 4; bottomMargin: Theme.barHeight + 2 }
-        color: Theme.bg
-        border.width: Theme.border
-        border.color: Theme.scarlet
+        width: 440; height: 580
+        anchors { left: parent.left; bottom: parent.bottom; leftMargin: 3; bottomMargin: Theme.barHeight - 2 }
         MouseArea { anchors.fill: parent }   // клики внутри не закрывают меню
 
+        // ── полоса слева: дизеринг и готическая надпись ──
+        Item {
+            id: banner
+            width: 44
+            anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
+            Rectangle { anchors.fill: parent; color: Theme.blood }
+            Image {
+                anchors.fill: parent
+                source: Theme.asset("ui/checker.png")
+                fillMode: Image.Tile
+                smooth: false
+                opacity: 0.85
+            }
+            Rectangle {
+                anchors.fill: parent
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: "#000000" }
+                    GradientStop { position: 0.6; color: "#00000000" }
+                }
+            }
+            Text {
+                text: "BaphOS"
+                color: Theme.scarlet
+                font.family: Theme.fontGothic
+                font.pixelSize: 48
+                renderType: Text.NativeRendering
+                rotation: -90
+                transformOrigin: Item.TopLeft
+                x: 0
+                y: parent.height - 6
+            }
+        }
+
         ColumnLayout {
-            anchors { fill: parent; margins: 10 }
+            anchors { left: banner.right; right: parent.right; top: parent.top; bottom: parent.bottom; margins: 8 }
             spacing: 8
 
-            // шапка: сигил и имя
-            Row {
+            // шапка
+            RowLayout {
                 spacing: 10
-                Image { source: Theme.asset("sigil/sigil-64.png"); width: 64; height: 64; smooth: false }
-                Column {
-                    anchors.verticalCenter: parent.verticalCenter
-                    PixelText { text: "BaphOS"; color: Theme.scarlet; font.pixelSize: 26 }
-                    PixelText { text: Quickshell.env("USER") ?? ""; color: Theme.dim }
+                Image { source: Theme.asset("sigil/sigil-64.png"); Layout.preferredWidth: 64; Layout.preferredHeight: 64; smooth: false }
+                ColumnLayout {
+                    spacing: 2
+                    PixelText { text: Quickshell.env("USER") ?? ""; color: Theme.scarlet; font.pixelSize: 24 }
+                    PixelText { text: "служитель тьмы"; color: Theme.dim }
                 }
             }
 
+            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.bevelLo }
+
             // поиск
-            Rectangle {
+            Bevel {
+                sunken: true
+                face: Theme.bg
                 Layout.fillWidth: true
-                height: 26
-                color: Theme.bgAlt
-                border.width: Theme.border
-                border.color: search.activeFocus ? Theme.scarlet : Theme.blood
+                Layout.preferredHeight: 32
+                Image { id: lens; source: Theme.icon("search", "dim"); width: 24; height: 24; smooth: false; anchors { left: parent.left; leftMargin: 4; verticalCenter: parent.verticalCenter } }
                 TextInput {
                     id: search
-                    anchors { fill: parent; leftMargin: 8; rightMargin: 8 }
+                    anchors { left: lens.right; right: parent.right; top: parent.top; bottom: parent.bottom; leftMargin: 6; rightMargin: 6 }
                     verticalAlignment: TextInput.AlignVCenter
                     color: Theme.text
                     selectionColor: Theme.blood
@@ -87,76 +119,86 @@ PanelWindow {
                     Keys.onUpPressed: list.decrementCurrentIndex()
                     Keys.onReturnPressed: menuWin.launch(menuWin.apps[list.currentIndex])
                     Keys.onEnterPressed: menuWin.launch(menuWin.apps[list.currentIndex])
-                    PixelText { visible: !search.text; text: "Поиск..."; color: Theme.dim; anchors.verticalCenter: parent.verticalCenter }
+                    PixelText { visible: !search.text; text: "Призвать программу..."; color: Theme.dim; anchors.verticalCenter: parent.verticalCenter }
                 }
             }
 
             // приложения
-            ListView {
-                id: list
+            Bevel {
+                sunken: true
+                face: Theme.bg
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                clip: true
-                model: menuWin.apps
-                boundsBehavior: Flickable.StopAtBounds
-                highlightMoveDuration: 0
-                delegate: Rectangle {
-                    id: row
-                    required property var modelData
-                    required property int index
-                    width: list.width; height: 26
-                    color: ListView.isCurrentItem ? Theme.dried : (rowArea.containsMouse ? Theme.coal : "transparent")
-                    border.width: ListView.isCurrentItem ? 1 : 0
-                    border.color: Theme.scarlet
-                    Row {
-                        anchors { fill: parent; leftMargin: 6 }
-                        spacing: 8
-                        IconImage {
-                            anchors.verticalCenter: parent.verticalCenter
-                            implicitSize: 18
-                            source: Quickshell.iconPath(row.modelData.icon, "application-x-executable")
+                ListView {
+                    id: list
+                    anchors { fill: parent; margins: 2 }
+                    clip: true
+                    model: menuWin.apps
+                    boundsBehavior: Flickable.StopAtBounds
+                    highlightMoveDuration: 0
+                    delegate: Rectangle {
+                        id: row
+                        required property var modelData
+                        required property int index
+                        readonly property bool cur: ListView.isCurrentItem
+                        width: list.width; height: 28
+                        color: cur ? Theme.scarlet : "transparent"
+                        Row {
+                            anchors { fill: parent; leftMargin: 6 }
+                            spacing: 8
+                            IconImage {
+                                anchors.verticalCenter: parent.verticalCenter
+                                implicitSize: 16
+                                source: Quickshell.iconPath(row.modelData.icon, "application-x-executable")
+                            }
+                            PixelText {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: list.width - 40
+                                text: row.modelData.name
+                                color: row.cur ? Theme.bg : Theme.text
+                            }
                         }
-                        PixelText {
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: list.width - 40
-                            text: row.modelData.name
-                            color: row.ListView.isCurrentItem ? Theme.scarlet : Theme.text
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onEntered: list.currentIndex = row.index
+                            onClicked: menuWin.launch(row.modelData)
                         }
                     }
-                    MouseArea {
-                        id: rowArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onEntered: list.currentIndex = row.index
-                        onClicked: menuWin.launch(row.modelData)
-                    }
+                    PixelText { anchors.centerIn: parent; visible: list.count === 0; text: "Пустота. Ничего не найдено."; color: Theme.dim }
                 }
-                PixelText { anchors.centerIn: parent; visible: list.count === 0; text: "Ничего не найдено"; color: Theme.dim }
             }
 
-            // питание: второй клик подтверждает
+            // питание: второй клик подтверждает (кроме блокировки)
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 4
                 Repeater {
                     model: [
-                        ["Выход", ["niri", "msg", "action", "quit", "--skip-confirmation"]],
-                        ["Перезагрузка", ["systemctl", "reboot"]],
-                        ["Выключение", ["systemctl", "poweroff"]],
+                        { label: "Замок", icon: "lock", confirm: false, cmd: null },
+                        { label: "Выход", icon: "logout", confirm: true, cmd: ["niri", "msg", "action", "quit", "--skip-confirmation"] },
+                        { label: "Заново", icon: "reload", confirm: true, cmd: ["systemctl", "reboot"] },
+                        { label: "Уснуть", icon: "power", confirm: true, cmd: ["systemctl", "poweroff"] },
                     ]
                     PixelButton {
                         id: pw
                         required property var modelData
                         property bool armed: false
                         Layout.fillWidth: true
-                        height: 26
+                        Layout.preferredHeight: 34
                         active: armed
                         onClicked: {
-                            if (armed) Quickshell.execDetached(modelData[1]);
+                            if (!modelData.cmd) { menuWin.closeRequested(); menuWin.lockRequested(); return; }
+                            if (armed || !modelData.confirm) Quickshell.execDetached(modelData.cmd);
                             else { armed = true; disarm.restart(); }
                         }
                         Timer { id: disarm; interval: 3000; onTriggered: pw.armed = false }
-                        PixelText { anchors.centerIn: parent; text: pw.armed ? "Точно?" : pw.modelData[0]; color: pw.armed ? Theme.scarlet : Theme.text }
+                        Row {
+                            anchors.centerIn: parent
+                            spacing: 4
+                            Image { source: Theme.icon(pw.modelData.icon, pw.armed ? "scarlet" : "bone"); width: 24; height: 24; smooth: false; anchors.verticalCenter: parent.verticalCenter }
+                            PixelText { text: pw.armed ? "Точно?" : pw.modelData.label; color: pw.armed ? Theme.scarlet : Theme.text; anchors.verticalCenter: parent.verticalCenter }
+                        }
                     }
                 }
             }

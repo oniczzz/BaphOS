@@ -42,8 +42,11 @@ python3 art/icons.py assets/icons/BaphOS          # после курсора: �
 [[ -f art/sigil.py ]] && python3 art/sigil.py assets/sigil
 [[ -f art/wallpapers.py ]] && python3 art/wallpapers.py assets/wallpapers
 python3 art/fastfetch_logo.py fastfetch/logo.txt
+command -v rsvg-convert >/dev/null && python3 art/ui_icons.py   # иконки интерфейса (Pixelarticons, MIT)
 
 link assets/icons/BaphOS     "$H/.local/share/icons/BaphOS"
+link fonts                   "$H/.local/share/fonts/BaphOS"     # Pixelify Sans, Jacquard 24, Press Start 2P (OFL)
+command -v fc-cache >/dev/null && fc-cache -f "$H/.local/share/fonts" >/dev/null
 mkdir -p -- "$H/.local/state/baphos"          # настройки оболочки (обои, сюжет)
 link quickshell/baphos       "$H/.config/quickshell/baphos"
 link foot/foot.ini            "$H/.config/foot/foot.ini"

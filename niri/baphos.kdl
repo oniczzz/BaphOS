@@ -116,6 +116,8 @@ input {
 layout {
     // Set gaps around windows in logical pixels.
     gaps 6
+    // прозрачный фон рабочих столов: сквозь него видны обои BaphOS (они на подложке, см. layer-rule)
+    background-color "transparent"
 
     // When to center a column when changing focus, options are:
     // - "never", default behavior, focusing an off-screen column will keep at the left
