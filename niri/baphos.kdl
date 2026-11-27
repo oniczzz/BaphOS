@@ -402,6 +402,12 @@ window-rule {
     clip-to-geometry true
 }
 
+// полупрозрачный kitty: рамку фокуса рисовать только по краю, а не сплошной заливкой под окном
+window-rule {
+    match app-id="^kitty$"
+    draw-border-with-background false
+}
+
 // окно Настроек BaphOS — плавающее, по центру
 window-rule {
     match title="^BaphOS — Настройки$"
