@@ -34,6 +34,12 @@ ShellRoot {
         }
     }
 
+    Notifications {
+        screen: root.focusedScreen() || Quickshell.screens[0]
+    }
+
+    Lock {}
+
     StartMenu {
         screen: root.startScreen
         open: root.startOpen
