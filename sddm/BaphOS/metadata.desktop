@@ -1,0 +1,11 @@
+[SddmGreeterTheme]
+Name=BaphOS
+Description=BaphOS — пиксельный экран входа
+Author=oniczzz
+License=MIT
+Type=sddm-theme
+Version=0.5
+Website=https://github.com/oniczzz/BaphOS
+MainScript=Main.qml
+ConfigFile=theme.conf
+QtVersion=6

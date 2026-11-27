@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # BaphOS: собирает графику и подключает райс к niri.
-#   ./install.sh
+#   ./install.sh            пользовательская часть
+#   ./install.sh --system   плюс экран входа SDDM и курсор для него (через sudo)
 # Что делает (только в ~/.config и ~/.local/share):
 #   ~/.config/niri/config.kdl      — короткий файл: include BaphOS + include "monitor.kdl" (твои мониторы)
 #   ~/.config/quickshell/baphos    — симлинк на оболочку из репозитория
@@ -110,6 +111,19 @@ if command -v gsettings >/dev/null 2>&1; then
   gsettings set org.gnome.desktop.interface font-name 'Cozette 10' || true
   gsettings set org.gnome.desktop.interface document-font-name 'Cozette 10' || true
   gsettings set org.gnome.desktop.interface monospace-font-name 'Cozette 10' || true
+fi
+
+# ── системная часть (--system): экран входа SDDM и курсор для него ──
+if [[ "${1:-}" == --system ]]; then
+  say "экран входа SDDM: тема BaphOS"
+  THEME_SRC="$("$REPO/sddm/build.sh")"
+  sudo rm -rf -- /usr/share/sddm/themes/BaphOS
+  sudo cp -r -- "$THEME_SRC" /usr/share/sddm/themes/BaphOS
+  sudo rm -rf -- /usr/share/icons/BaphOS
+  sudo cp -a -- "$REPO/assets/icons/BaphOS" /usr/share/icons/BaphOS
+  sudo mkdir -p -- /etc/sddm.conf.d
+  printf '[Theme]\nCurrent=BaphOS\nCursorTheme=BaphOS\nCursorSize=16\n' | sudo tee /etc/sddm.conf.d/baphos.conf >/dev/null
+  say "SDDM: /etc/sddm.conf.d/baphos.conf (убрать — удалить этот файл)"
 fi
 
 say "готово. niri перечитает конфиг сам; оболочка: qs -c baphos (стартует с niri)"

@@ -25,3 +25,9 @@ if grep -qF -- "include \"$REPO/niri/baphos.kdl\"" "$NIRI" 2>/dev/null; then
     echo "niri: бэкапа нет — $NIRI оставлен (убери из него строку include BaphOS)"
   fi
 fi
+
+if [[ "${1:-}" == --system ]]; then
+  sudo rm -f -- /etc/sddm.conf.d/baphos.conf
+  sudo rm -rf -- /usr/share/sddm/themes/BaphOS /usr/share/icons/BaphOS
+  echo "убраны тема SDDM и курсор BaphOS из системы"
+fi
