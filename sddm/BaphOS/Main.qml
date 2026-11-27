@@ -12,9 +12,8 @@ Rectangle {
     readonly property color dim: "#787070"
     readonly property color dried: "#3a0000"
 
-    FontLoader { id: uiFont; source: "fonts/PixelifySans.ttf" }
+    FontLoader { id: uiFont; source: "fonts/Monocraft-Regular.ttf" }
     FontLoader { id: gothic; source: "fonts/Jacquard24-Regular.ttf" }
-    FontLoader { id: numFont; source: "fonts/PressStart2P-Regular.ttf" }
 
     property int session: sessionModel.lastIndex >= 0 ? sessionModel.lastIndex : 0
     property string message: ""
@@ -46,7 +45,7 @@ Rectangle {
         id: clock
         anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 48 }
         color: root.scarlet
-        font.family: numFont.name; font.pixelSize: 32
+        font.family: uiFont.name; font.pixelSize: 32
         renderType: Text.NativeRendering
         Timer { interval: 1000; running: true; repeat: true; triggeredOnStart: true; onTriggered: clock.text = Qt.formatDateTime(new Date(), "HH:mm") }
     }

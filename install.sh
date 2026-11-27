@@ -47,8 +47,8 @@ command -v rsvg-convert >/dev/null && python3 art/ui_icons.py   # иконки �
 python3 art/frames.py                        # пиксельные рамки (9-slice)
 
 link assets/icons/BaphOS     "$H/.local/share/icons/BaphOS"
-link fonts                   "$H/.local/share/fonts/BaphOS"     # Pixelify Sans, Jacquard 24, Press Start 2P (OFL)
-link fontconfig/50-baphos-cozette.conf "$H/.config/fontconfig/conf.d/50-baphos-cozette.conf"   # CozetteVector = моно (для kitty)
+link fonts                   "$H/.local/share/fonts/BaphOS"     # Monocraft, Jacquard 24 (OFL)
+link fontconfig/50-baphos-monocraft.conf "$H/.config/fontconfig/conf.d/50-baphos-monocraft.conf"   # Monocraft без сглаживания
 command -v fc-cache >/dev/null && fc-cache -f "$H/.local/share/fonts" >/dev/null
 mkdir -p -- "$H/.local/state/baphos"          # настройки оболочки (обои, сюжет)
 link quickshell/baphos       "$H/.config/quickshell/baphos"
@@ -77,8 +77,8 @@ standard_dialogs=default
 style=Fusion
 
 [Fonts]
-fixed="Cozette,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
-general="Cozette,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
+fixed="Monocraft,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
+general="Monocraft,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
 
 [Interface]
 activate_item_on_single_click=1
@@ -113,9 +113,9 @@ if command -v gsettings >/dev/null 2>&1; then
   gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark || true
   gsettings set org.gnome.desktop.interface color-scheme prefer-dark || true
   gsettings set org.gnome.desktop.interface accent-color red 2>/dev/null || true
-  gsettings set org.gnome.desktop.interface font-name 'Cozette 10' || true
-  gsettings set org.gnome.desktop.interface document-font-name 'Cozette 10' || true
-  gsettings set org.gnome.desktop.interface monospace-font-name 'Cozette 10' || true
+  gsettings set org.gnome.desktop.interface font-name 'Monocraft 12' || true
+  gsettings set org.gnome.desktop.interface document-font-name 'Monocraft 12' || true
+  gsettings set org.gnome.desktop.interface monospace-font-name 'Monocraft 12' || true
 fi
 
 # ── системная часть (--system): экран входа SDDM и курсор для него ──

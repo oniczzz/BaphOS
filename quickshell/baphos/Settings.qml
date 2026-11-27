@@ -202,7 +202,7 @@ FloatingWindow {
                     PixelText { text: win.uptime }
                 }
                 Rectangle { width: parent.width; height: 2; color: Theme.dried }
-                PixelText { text: "Шрифты: Pixelify Sans, Jacquard 24, Press Start 2P (OFL) · Cozette (MIT)"; color: Theme.dim; width: parent.width }
+                PixelText { text: "Шрифты: Monocraft (OFL) · логотип — Jacquard 24 (OFL)"; color: Theme.dim; width: parent.width }
                 PixelText { text: "Иконки интерфейса: Pixelarticons (MIT). Остальная графика — своя."; color: Theme.dim; width: parent.width }
                 PixelText { text: "github.com/oniczzz/BaphOS"; color: Theme.crimson }
             }

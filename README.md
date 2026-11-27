@@ -25,10 +25,10 @@
 | ![Пуск](assets/previews/start-menu.png) | **Пуск** (`Mod+D` или кнопка с сигилом) вырастает из панели ступенями по 8 px, строки проявляются каскадом, в шапке горят свечи и дышит сигил. Поиск по программам, `?запрос` — поиск в сети, `>команда` — выполнить в терминале. Выход, перезагрузка и выключение — по второму клику. |
 | ![Настройки](assets/previews/settings.png) | **Настройки** (`Mod+S`): обои с миниатюрами, живые анимации и виджеты, сюжет (вкл/выкл, сброс прогресса), «О системе». |
 | ![Свиток клавиш](assets/previews/keys.png) | **Свиток клавиш** (`Mod+Shift+/`) — шпаргалка по всем сочетаниям. |
-| ![Терминал](assets/previews/kitty.png) | **Терминал kitty** (`Mod+T`): пиксельный Cozette, палитра BaphOS, алый курсор со шлейфом, сигил в углу окна, короткий fastfetch с сигилом из полублоков, prompt fish с веткой git. |
+| ![Терминал](assets/previews/kitty.png) | **Терминал kitty** (`Mod+T`): пиксельный Monocraft, палитра BaphOS, алый курсор со шлейфом, сигил в углу окна, короткий fastfetch с сигилом из полублоков, prompt fish с веткой git. |
 
 **Панель задач** снизу: Пуск, окна (клик — перейти, средний клик — закрыть; свернуть окно niri не умеет),
-трей, раскладка, звук (колесо — громкость), батарея, часы шрифтом Press Start 2P.
+трей, раскладка, звук (колесо — громкость), батарея, часы.
 
 ![Панель](assets/previews/taskbar.png)
 
@@ -106,7 +106,7 @@ cd ~/projects/BaphOS
 ```
 
 Пакеты: `niri quickshell python-pillow xorg-xcursorgen librsvg kitty foot fastfetch fish adw-gtk-theme qt6ct`,
-шрифт `cozette-otb` (AUR).
+шрифты — в `fonts/` репозитория.
 
 `install.sh` трогает только `~/.config`, `~/.local/share` и `~/.local/bin` (с `--system` — ещё
 `/usr/share/sddm/themes/BaphOS`, `/usr/share/icons/BaphOS`, `/etc/sddm.conf.d/baphos.conf`):
@@ -144,9 +144,8 @@ fonts/        шрифты (OFL, MIT)
 
 Код и графика BaphOS — MIT. Чужое, с лицензиями рядом:
 
-- шрифты в `fonts/`: [Pixelify Sans](https://github.com/eifetx/Pixelify-Sans),
-  [Jacquard 24](https://github.com/scfried/soft-type-jacquard),
-  [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) — SIL OFL 1.1 (из [google/fonts](https://github.com/google/fonts));
-  [CozetteVector](https://github.com/slavfox/Cozette) — MIT;
+- шрифты в `fonts/` — SIL OFL 1.1: [Monocraft](https://github.com/IdreesInc/Monocraft) — весь райс
+  (интерфейс, терминал, GTK, Qt, SDDM), [Jacquard 24](https://github.com/scfried/soft-type-jacquard) — только
+  готический логотип (из [google/fonts](https://github.com/google/fonts));
 - иконки интерфейса `assets/ui/pixelarticons` — [Pixelarticons](https://github.com/halfmage/pixelarticons), MIT, перекрашены;
 - The Binding of Isaac и Cult of the Lamb — собственность их авторов; BaphOS лишь отсылает к ним своей графикой.

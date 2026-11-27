@@ -202,7 +202,7 @@ PanelWindow {
                         id: clockDate
                         anchors.horizontalCenter: parent.horizontalCenter
                         color: Theme.dim
-                        font.family: Theme.fontNum; font.pixelSize: 8
+                        font.family: Theme.fontNum; font.pixelSize: 12
                         renderType: Text.NativeRendering
                     }
                     Timer {

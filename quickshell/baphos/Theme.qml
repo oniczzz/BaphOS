@@ -23,11 +23,11 @@ Singleton {
     readonly property color bevelLoIn: "#260707"    // внутренняя тень
 
     // шрифты (fonts/ в репозитории, OFL): чёткие только на своих размерах
-    readonly property string font: "Pixelify Sans"   // интерфейс, кириллица: 16 / 24 px
+    readonly property string font: "Monocraft"       // весь райс, кириллица: 16 / 24 / 32 px
     readonly property int fontPx: 16
-    readonly property string fontNum: "Press Start 2P" // часы и цифры: 8 / 16 px
+    readonly property string fontNum: "Monocraft"      // часы и цифры
     readonly property string fontGothic: "Jacquard 24" // логотип, только латиница: 24 / 48 px
-    readonly property string fontMono: "Cozette"       // моно: 13 px
+    readonly property string fontMono: "Monocraft"     // моно
 
     readonly property int barHeight: 44
     readonly property int border: 2

@@ -35,7 +35,7 @@ Rectangle {
             id: clock
             anchors.horizontalCenter: parent.horizontalCenter
             color: Theme.scarlet
-            font.pixelSize: 52
+            font.pixelSize: 48
             Timer {
                 interval: 1000; running: true; repeat: true; triggeredOnStart: true
                 onTriggered: clock.text = Qt.formatDateTime(new Date(), "HH:mm")
