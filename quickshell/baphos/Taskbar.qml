@@ -59,8 +59,65 @@ PanelWindow {
             }
         }
 
-        Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: Theme.bevelLo }
-        Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: Theme.bevelHiIn }
+        // ── рабочие столы этого монитора: свечи. Активный горит, с окнами — тлеет, пустой погас ──
+        Bevel {
+            id: wsWell
+            kind: "well"
+            property int tick: 0
+            readonly property var list: Niri.workspacesOn(bar.modelData.name)
+            Layout.fillHeight: true
+            Layout.preferredWidth: wsRow.implicitWidth + 12
+            visible: list.length > 0
+            Timer { interval: 125; repeat: true; running: Store.data.animations; onTriggered: wsWell.tick++ }
+            Row {
+                id: wsRow
+                anchors.centerIn: parent
+                spacing: 4
+                Repeater {
+                    model: wsWell.list
+                    Item {
+                        id: ws
+                        required property var modelData
+                        required property int index
+                        readonly property bool lit: modelData.is_active
+                        readonly property bool busy: modelData.active_window_id !== null && modelData.active_window_id !== undefined
+                        width: 18; height: 32
+                        // пламя (горит) или искра на фитиле (тлеет)
+                        Image {
+                            visible: ws.lit
+                            x: 3; y: 0
+                            source: Theme.asset("wallpapers/anim/flame-" + ((wsWell.tick + ws.index) % 4) + ".png")
+                            smooth: false
+                        }
+                        Rectangle { visible: !ws.lit && ws.busy; x: 7; y: 8; width: 4; height: 4; color: (wsWell.tick + ws.index * 3) % 8 < 5 ? Theme.scarlet : Theme.crimson }
+                        Rectangle { x: 8; y: 12; width: 2; height: 2; color: Theme.dim }                         // фитиль
+                        Rectangle {                                                                               // воск
+                            x: 3; y: 14; width: 12; height: 18
+                            color: ws.lit ? Theme.text : ws.busy ? "#a8a0a0" : "#3a3434"
+                            Rectangle { x: 0; y: 0; width: 3; height: parent.height; color: ws.lit ? Theme.dim : "#262020" }
+                            Text {
+                                anchors.centerIn: parent
+                                anchors.horizontalCenterOffset: 1
+                                text: ws.modelData.idx
+                                color: ws.lit ? Theme.blood : Theme.bg
+                                font.family: Theme.font; font.pixelSize: 12; font.bold: true
+                                renderType: Text.NativeRendering
+                            }
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: Niri.focusWorkspace(bar.modelData.name, ws.modelData.idx)
+                        }
+                    }
+                }
+            }
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.NoButton
+                onWheel: w => Quickshell.execDetached(["sh", "-c", "niri msg action focus-monitor " + bar.modelData.name
+                    + " && niri msg action " + (w.angleDelta.y > 0 ? "focus-workspace-up" : "focus-workspace-down")])
+            }
+        }
 
         // ── открытые окна ──
         Row {
