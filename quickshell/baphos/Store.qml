@@ -45,6 +45,7 @@ Singleton {
             property bool sounds: true          // звуки BaphOS (assets/sounds)
             property bool gameMode: false       // игровой режим: без глитчей, звуков, всплывашек
             property bool autoGameMode: true    // включать его самому, когда окно во весь экран
+            property var favorites: ["kitty", "org.gnome.Nautilus", "helium", "steam", "discord", "org.telegram.desktop"]  // избранное в Пуске
             property bool story: true           // сюжет (вирус культа) — только визуальный
             property int storyStage: 0          // этап заражения
             property var storySeen: []          // какие события сюжета уже были

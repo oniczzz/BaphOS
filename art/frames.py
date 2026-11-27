@@ -75,6 +75,22 @@ def main():
     ]:
         img, b2 = nine(corner, edge, fill)
         img.save(OUT / f"{name}.png")
+    # страница гримуара: тёмный «пергамент» с редкими пятнами (плитка 32x32, x2)
+    import random
+    rnd = random.Random("baphos-page")
+    page = Image.new("RGBA", (32, 32), (14, 7, 7, 255))
+    for _ in range(70):
+        page.putpixel((rnd.randrange(32), rnd.randrange(32)), rnd.choice([(20, 9, 9, 255), (24, 11, 11, 255), (10, 5, 5, 255)]))
+    page.resize((64, 64), Image.NEAREST).save(OUT / "page.png")
+    # корешок: тёмно-красный с прошивкой (плитка 12x8, x2), по вертикали повторяется
+    spine = Image.new("RGBA", (12, 8), (40, 0, 0, 255))
+    for y in range(8):
+        spine.putpixel((0, y), (0, 0, 0, 255)); spine.putpixel((11, y), (0, 0, 0, 255))
+        spine.putpixel((1, y), (70, 0, 0, 255)); spine.putpixel((10, y), (22, 0, 0, 255))
+    for x in (4, 5, 6, 7):
+        spine.putpixel((x, 2), (160, 0, 0, 255))      # стежок
+    spine.putpixel((5, 3), (107, 0, 0, 255)); spine.putpixel((6, 3), (107, 0, 0, 255))
+    spine.resize((24, 16), Image.NEAREST).save(OUT / "spine.png")
     print(f"frames -> {OUT} (panel border {b1}px, buttons {b2}px)")
 
 
