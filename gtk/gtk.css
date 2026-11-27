@@ -1,0 +1,96 @@
+/* BaphOS: цвета GTK3 (тема adw-gtk3-dark) и GTK4/libadwaita. Один файл на обе версии.
+   Прямые углы и без теней — пиксельный вид и меньше работы видеокарте. */
+
+/* именованные цвета (GTK3 adw-gtk3, libadwaita < 1.6) */
+@define-color accent_color #ff1a1a;
+@define-color accent_bg_color #6b0000;
+@define-color accent_fg_color #ffffff;
+@define-color destructive_color #ff5040;
+@define-color destructive_bg_color #a00000;
+@define-color destructive_fg_color #ffffff;
+@define-color success_color #9aab6c;
+@define-color success_bg_color #4c5a34;
+@define-color warning_color #d8b878;
+@define-color warning_bg_color #6a5228;
+@define-color error_color #ff5040;
+@define-color error_bg_color #a00000;
+@define-color window_bg_color #0a0a0a;
+@define-color window_fg_color #d8d8d8;
+@define-color view_bg_color #000000;
+@define-color view_fg_color #d8d8d8;
+@define-color headerbar_bg_color #000000;
+@define-color headerbar_fg_color #ff1a1a;
+@define-color headerbar_border_color #3a0000;
+@define-color headerbar_backdrop_color #0a0a0a;
+@define-color headerbar_shade_color #000000;
+@define-color sidebar_bg_color #050303;
+@define-color sidebar_fg_color #d8d8d8;
+@define-color sidebar_backdrop_color #0a0a0a;
+@define-color sidebar_border_color #3a0000;
+@define-color card_bg_color #120a0a;
+@define-color card_fg_color #d8d8d8;
+@define-color card_shade_color #000000;
+@define-color dialog_bg_color #0a0a0a;
+@define-color dialog_fg_color #d8d8d8;
+@define-color popover_bg_color #0a0a0a;
+@define-color popover_fg_color #d8d8d8;
+@define-color shade_color #000000;
+@define-color scrollbar_outline_color #000000;
+@define-color borders #3a0000;
+@define-color theme_selected_bg_color #6b0000;
+@define-color theme_selected_fg_color #ffffff;
+
+/* CSS-переменные (libadwaita 1.6+) */
+:root {
+  --accent-color: #ff1a1a;
+  --accent-bg-color: #6b0000;
+  --accent-fg-color: #ffffff;
+  --destructive-bg-color: #a00000;
+  --window-bg-color: #0a0a0a;
+  --window-fg-color: #d8d8d8;
+  --view-bg-color: #000000;
+  --view-fg-color: #d8d8d8;
+  --headerbar-bg-color: #000000;
+  --headerbar-fg-color: #ff1a1a;
+  --headerbar-border-color: #3a0000;
+  --headerbar-backdrop-color: #0a0a0a;
+  --sidebar-bg-color: #050303;
+  --sidebar-fg-color: #d8d8d8;
+  --sidebar-border-color: #3a0000;
+  --card-bg-color: #120a0a;
+  --card-fg-color: #d8d8d8;
+  --dialog-bg-color: #0a0a0a;
+  --popover-bg-color: #0a0a0a;
+  --window-radius: 0;
+  --border-color: #3a0000;
+}
+
+/* пиксельно: без скруглений и теней */
+* {
+  border-radius: 0;
+  box-shadow: none;
+  -gtk-icon-shadow: none;
+}
+
+selection, *:selected {
+  background-color: #6b0000;
+  color: #ffffff;
+}
+
+headerbar .title, .titlebar .title {
+  color: #ff1a1a;
+}
+
+/* фокус — алая рамка */
+*:focus-visible {
+  outline-color: #ff1a1a;
+}
+
+scrollbar slider {
+  background-color: #6b0000;
+  min-width: 6px;
+  min-height: 6px;
+}
+scrollbar slider:hover {
+  background-color: #ff1a1a;
+}

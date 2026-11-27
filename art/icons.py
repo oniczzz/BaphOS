@@ -180,7 +180,7 @@ icon(["utilities-system-monitor", "btop", "htop", "org.gnome.SystemMonitor", "io
     "................",
 ])
 icon(["accessories-text-editor", "text-editor", "nvim", "micro", "org.gnome.TextEditor", "meld",
-      "org.gnome.Meld", "text-x-generic", "gvim", "vim"], [
+      "org.gnome.Meld", "text-x-generic", "gvim", "vim", "text-plain", "text-x-script", "application-x-shellscript", "text-x-shellscript", "text-markdown", "text-x-markdown", "text-x-python", "text-x-python3", "application-json", "text-x-log", "text-x-csrc", "text-x-chdr", "text-x-c++src", "application-javascript", "text-x-javascript", "text-html", "text-css", "text-x-qml", "application-xml", "text-xml", "application-toml", "text-x-makefile", "text-x-readme", "x-office-document", "application-x-desktop", "text-x-kotlin", "text-x-java"], [
     "................",
     "..bbbbbbbbb.....",
     "..bwwwwwwwbb....",

@@ -50,6 +50,33 @@ link foot/foot.ini            "$H/.config/foot/foot.ini"
 link fastfetch               "$H/.config/fastfetch"
 link fish/functions/fish_prompt.fish "$H/.config/fish/functions/fish_prompt.fish"
 link fish/conf.d/baphos.fish "$H/.config/fish/conf.d/baphos.fish"
+link gtk/gtk.css              "$H/.config/gtk-3.0/gtk.css"
+link gtk/gtk.css              "$H/.config/gtk-4.0/gtk.css"
+link qt/BaphOS.conf           "$H/.config/qt6ct/colors/BaphOS.conf"
+
+# qt6ct: стиль Fusion + палитра BaphOS (файл с абсолютным путём — пишется здесь, не симлинк)
+QT="$H/.config/qt6ct/qt6ct.conf"
+if ! grep -qF "colors/BaphOS.conf" "$QT" 2>/dev/null; then
+  backup "$QT"
+  cat >"$QT" <<QTCONF
+[Appearance]
+color_scheme_path=$H/.config/qt6ct/colors/BaphOS.conf
+custom_palette=true
+icon_theme=BaphOS
+standard_dialogs=default
+style=Fusion
+
+[Fonts]
+fixed="Cozette,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
+general="Cozette,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
+
+[Interface]
+activate_item_on_single_click=1
+menus_have_icons=true
+show_shortcuts_in_context_menus=true
+QTCONF
+  say "$QT: палитра BaphOS"
+fi
 
 # niri: свой config.kdl с include BaphOS; мониторы остаются в monitor.kdl
 NIRI="$H/.config/niri/config.kdl"
@@ -72,6 +99,12 @@ if command -v gsettings >/dev/null 2>&1; then
   gsettings set org.gnome.desktop.interface cursor-theme BaphOS || true
   gsettings set org.gnome.desktop.interface cursor-size 16 || true
   gsettings set org.gnome.desktop.interface icon-theme BaphOS || true
+  gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark || true
+  gsettings set org.gnome.desktop.interface color-scheme prefer-dark || true
+  gsettings set org.gnome.desktop.interface accent-color red 2>/dev/null || true
+  gsettings set org.gnome.desktop.interface font-name 'Cozette 10' || true
+  gsettings set org.gnome.desktop.interface document-font-name 'Cozette 10' || true
+  gsettings set org.gnome.desktop.interface monospace-font-name 'Cozette 10' || true
 fi
 
 say "готово. niri перечитает конфиг сам; оболочка: qs -c baphos (стартует с niri)"

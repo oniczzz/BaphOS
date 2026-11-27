@@ -365,6 +365,7 @@ layer-rule {
 // пиксельные значки BaphOS в оболочке (Пуск, панель)
 environment {
     QS_ICON_THEME "BaphOS"
+    QT_QPA_PLATFORMTHEME "qt6ct"
 }
 
 binds {
