@@ -13,8 +13,8 @@ ESC = "\x1b"
 HEAD = (160, 0, 0, 255)
 
 
-def main(out, n=36):
-    img = sigil(n, head_color=HEAD)
+def main(out, n=28):
+    img = sigil(n, head_color=HEAD, force_head=True)
     px = img.load()
 
     def col(x, y):

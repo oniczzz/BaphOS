@@ -18,7 +18,7 @@ def star_points(c, r):
             for k in range(5)]
 
 
-def sigil(n, fg=SCARLET, head_color=None):
+def sigil(n, fg=SCARLET, head_color=None, force_head=False):
     """Сигил n x n: круги и звезда линиями, голова — алый силуэт с чёрной обводкой и чёрными прорезями."""
     m = Image.new("RGBA", (n, n), CLEAR)
     d = ImageDraw.Draw(m)
@@ -31,7 +31,7 @@ def sigil(n, fg=SCARLET, head_color=None):
     pts = star_points(c, r)
     for k in range(5):
         d.line([pts[k], pts[(k + 2) % 5]], fill=fg, width=lw)
-    if n < 32:
+    if n < 32 and not force_head:
         return m                              # на 16 px голова не читается — звезда в двух кругах
 
     def P(x, y):                              # координаты в долях радиуса от центра, y вниз

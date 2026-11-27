@@ -62,6 +62,13 @@ link foot/foot.ini            "$H/.config/foot/foot.ini"          # запасн
 link fastfetch               "$H/.config/fastfetch"
 link fish/functions/fish_prompt.fish "$H/.config/fish/functions/fish_prompt.fish"
 link fish/conf.d/baphos.fish "$H/.config/fish/conf.d/baphos.fish"
+link fish/functions/ff.fish   "$H/.config/fish/functions/ff.fish"   # ff — fastfetch по команде
+# приветствие CachyOS (fastfetch при каждом открытии терминала) — выключить; fastfetch только по ff
+FISHCFG="$H/.config/fish/config.fish"
+if [[ -f "$FISHCFG" ]] && ! grep -qF "BaphOS: без приветствия" "$FISHCFG"; then
+  printf '\n# BaphOS: без приветствия — fastfetch по команде ff\nfunction fish_greeting\nend\n' >>"$FISHCFG"
+  say "$FISHCFG: приветствие выключено (fastfetch — по команде ff)"
+fi
 link gtk/gtk.css              "$H/.config/gtk-3.0/gtk.css"
 link gtk/gtk.css              "$H/.config/gtk-4.0/gtk.css"
 link qt/BaphOS.conf           "$H/.config/qt6ct/colors/BaphOS.conf"
