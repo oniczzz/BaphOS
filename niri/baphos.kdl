@@ -398,7 +398,8 @@ binds {
     Mod+B hotkey-overlay-title="Helium" { spawn "helium-browser"; }
     Alt+Tab hotkey-overlay-title="Предыдущее окно" { focus-window-previous; }
     Mod+Tab hotkey-overlay-title="Список окон" { spawn "/home/onz/.local/bin/niri-window-switch"; }
-    Mod+Shift+S hotkey-overlay-title="Steam" { spawn "steam"; }
+    Mod+Shift+S hotkey-overlay-title="Скриншот области" { screenshot; }
+    Mod+Alt+S hotkey-overlay-title="Steam" { spawn "steam"; }
     Mod+Shift+D hotkey-overlay-title="Discord" { spawn "discord"; }
     Mod+Shift+G hotkey-overlay-title="Telegram" { spawn "Telegram"; }
     Mod+D hotkey-overlay-title="Пуск" { spawn "qs" "-c" "baphos" "ipc" "call" "start" "toggle"; }

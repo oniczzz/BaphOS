@@ -36,8 +36,10 @@ PanelWindow {
         ["Mod+1..9", "Рабочий стол N"],
         ["Mod+R", "Ширина колонки"],
         ["Mod+V", "Окно плавающее/нет"],
+        ["Mod+Shift+S", "Скриншот области"],
         ["Print", "Скриншот"],
-        ["Mod+Shift+S/D/G", "Steam / Discord / Telegram"],
+        ["Mod+Alt+S", "Steam"],
+        ["Mod+Shift+D/G", "Discord / Telegram"],
         ["Alt+Shift", "Раскладка RU/EN"],
         ["Mod+Shift+E", "Выйти из niri"],
     ]
