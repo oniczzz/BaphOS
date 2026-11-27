@@ -364,8 +364,18 @@ animations {
 // Find more information on the wiki:
 // https://niri-wm.github.io/niri/Configuration:-Window-Rules
 
+// Как в Windows: все окна открываются плавающими, по центру, примерно на пол-экрана.
+// Двигать — Win + левая кнопка, размер — за край или Win + правая кнопка.
+// «Закрепить» окно в ленту niri и обратно — Win+V или правый клик по его кнопке на панели задач.
+window-rule {
+    open-floating true
+    default-column-width { proportion 0.55; }
+    default-window-height { proportion 0.65; }
+
 // Work around WezTerm's initial configure bug
 // by setting an empty default-column-width.
+}
+
 window-rule {
     // This regular expression is intentionally made as specific as possible,
     // since this is the default config, and we want no false positives.

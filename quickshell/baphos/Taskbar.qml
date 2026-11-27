@@ -144,6 +144,11 @@ PanelWindow {
                     active: modelData.activated
                     onClicked: mouse => {
                         if (mouse.button === Qt.MiddleButton) modelData.close();
+                        else if (mouse.button === Qt.RightButton) {
+                            // правый клик: закрепить в ленту / освободить (плавающее) — как Win+V
+                            modelData.activate();
+                            Quickshell.execDetached(["sh", "-c", "sleep 0.15; niri msg action toggle-window-floating"]);
+                        }
                         else modelData.activate();
                     }
                     Row {
