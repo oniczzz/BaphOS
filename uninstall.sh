@@ -6,7 +6,8 @@ set -euo pipefail
 REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 H="${HOME:?HOME не задан}"
 
-for dst in "$H/.config/quickshell/baphos" "$H/.local/share/icons/BaphOS"; do
+for dst in "$H/.config/quickshell/baphos" "$H/.local/share/icons/BaphOS" "$H/.config/foot/foot.ini" \
+           "$H/.config/fastfetch" "$H/.config/fish/functions/fish_prompt.fish" "$H/.config/fish/conf.d/baphos.fish"; do
   if [[ -L "$dst" && "$(readlink -- "$dst")" == "$REPO"/* ]]; then
     rm -- "$dst"
     echo "убран $dst"

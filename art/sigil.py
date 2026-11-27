@@ -18,7 +18,7 @@ def star_points(c, r):
             for k in range(5)]
 
 
-def sigil(n, fg=SCARLET):
+def sigil(n, fg=SCARLET, head_color=None):
     """Сигил n x n: круги и звезда линиями, голова — алый силуэт с чёрной обводкой и чёрными прорезями."""
     m = Image.new("RGBA", (n, n), CLEAR)
     d = ImageDraw.Draw(m)
@@ -53,7 +53,7 @@ def sigil(n, fg=SCARLET):
 
     black = Image.new("RGBA", (n, n), (0, 0, 0, 255))
     m.paste(black, (0, 0), head.filter(ImageFilter.MaxFilter(3)))   # чёрный зазор вокруг головы
-    m.paste(Image.new("RGBA", (n, n), fg), (0, 0), head)
+    m.paste(Image.new("RGBA", (n, n), head_color or fg), (0, 0), head)
     # прорези: глаза-щели, ноздри
     ew, eh = max(2, round(0.13 * r)), max(1, round(0.05 * r))
     for s in (-1, 1):

@@ -4,7 +4,8 @@
 # Что делает (только в ~/.config и ~/.local/share):
 #   ~/.config/niri/config.kdl      — короткий файл: include BaphOS + include "monitor.kdl" (твои мониторы)
 #   ~/.config/quickshell/baphos    — симлинк на оболочку из репозитория
-#   ~/.local/share/icons/BaphOS    — симлинк на курсор
+#   ~/.local/share/icons/BaphOS    — симлинк на тему значков и курсор
+#   foot, fastfetch, fish (prompt и цвета) — симлинки на файлы репозитория
 # Чужой файл на месте не удаляется: он переименовывается в <имя>.bak.<дата>.
 set -euo pipefail
 
@@ -40,10 +41,15 @@ python3 art/cursor.py assets/icons/BaphOS
 python3 art/icons.py assets/icons/BaphOS          # после курсора: пишет общий index.theme
 [[ -f art/sigil.py ]] && python3 art/sigil.py assets/sigil
 [[ -f art/wallpapers.py ]] && python3 art/wallpapers.py assets/wallpapers
+python3 art/fastfetch_logo.py fastfetch/logo.txt
 
 link assets/icons/BaphOS     "$H/.local/share/icons/BaphOS"
 mkdir -p -- "$H/.local/state/baphos"          # настройки оболочки (обои, сюжет)
 link quickshell/baphos       "$H/.config/quickshell/baphos"
+link foot/foot.ini            "$H/.config/foot/foot.ini"
+link fastfetch               "$H/.config/fastfetch"
+link fish/functions/fish_prompt.fish "$H/.config/fish/functions/fish_prompt.fish"
+link fish/conf.d/baphos.fish "$H/.config/fish/conf.d/baphos.fish"
 
 # niri: свой config.kdl с include BaphOS; мониторы остаются в monitor.kdl
 NIRI="$H/.config/niri/config.kdl"
