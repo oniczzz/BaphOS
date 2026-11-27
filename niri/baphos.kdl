@@ -371,10 +371,10 @@ window-rule {
     open-floating true
     default-column-width { proportion 0.55; }
     default-window-height { proportion 0.65; }
+}
 
 // Work around WezTerm's initial configure bug
 // by setting an empty default-column-width.
-}
 
 window-rule {
     // This regular expression is intentionally made as specific as possible,
