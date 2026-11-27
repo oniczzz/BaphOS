@@ -535,6 +535,8 @@ def main(out, sizes):
         global STATIC_FLAMES
         STATIC_FLAMES = True
         render(fn, name, 1920, 1080).resize((960, 540), Image.NEAREST).save(out / f"preview-{name}.png")
+        # миниатюра для Настроек: сцена в своём разрешении (1920/4 = 480x270), пиксель к пикселю
+        render(fn, name, 1920, 1080).resize((480, 270), Image.NEAREST).save(out / f"thumb-{name}.png")
         STATIC_FLAMES = False
     write_sprites(out)
     print(f"wallpapers: {len(SCENES)} сцен x {len(sizes)} размеров -> {out}")

@@ -358,6 +358,12 @@ window-rule {
     clip-to-geometry true
 }
 
+// окно Настроек BaphOS — плавающее, по центру
+window-rule {
+    match title="^BaphOS — Настройки$"
+    open-floating true
+}
+
 // обои BaphOS видны и в обзоре (Mod+O)
 layer-rule {
     match namespace="^baphos-wallpaper$"
@@ -395,6 +401,7 @@ binds {
     Mod+Shift+D hotkey-overlay-title="Discord" { spawn "discord"; }
     Mod+Shift+G hotkey-overlay-title="Telegram" { spawn "Telegram"; }
     Mod+D hotkey-overlay-title="Пуск" { spawn "qs" "-c" "baphos" "ipc" "call" "start" "toggle"; }
+    Mod+S hotkey-overlay-title="Настройки BaphOS" { spawn "qs" "-c" "baphos" "ipc" "call" "settings" "toggle"; }
     Mod+Shift+W hotkey-overlay-title="Сменить обои" { spawn "qs" "-c" "baphos" "ipc" "call" "wallpaper" "next"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.

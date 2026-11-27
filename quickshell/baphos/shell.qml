@@ -7,6 +7,7 @@ import Quickshell.Io
 ShellRoot {
     id: root
     property bool startOpen: false
+    property bool settingsOpen: false
     property var startScreen: Quickshell.screens[0]
 
     function toggleStart(screen) {
@@ -47,6 +48,17 @@ ShellRoot {
         open: root.startOpen
         onCloseRequested: root.startOpen = false
         onLockRequested: lock.lock()
+        onSettingsRequested: { root.startOpen = false; root.settingsOpen = true; }
+    }
+
+    Settings {
+        open: root.settingsOpen
+        onDismissed: root.settingsOpen = false
+    }
+
+    IpcHandler {
+        target: "settings"
+        function toggle(): void { root.settingsOpen = !root.settingsOpen }
     }
 
     IpcHandler {

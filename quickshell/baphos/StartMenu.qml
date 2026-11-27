@@ -14,6 +14,7 @@ PanelWindow {
     property bool open: false
     signal closeRequested()
     signal lockRequested()
+    signal settingsRequested()
 
     // видимость живёт дольше open — чтобы успела проиграться анимация закрытия
     property bool shown: false
@@ -138,6 +139,13 @@ PanelWindow {
                             Rectangle { x: 0; y: 16; width: 12; height: 36; color: Theme.text } // воск
                             Rectangle { x: 0; y: 16; width: 4; height: 36; color: Theme.dim }  // тень на воске
                         }
+                    }
+                    // шестерёнка — Настройки
+                    PixelButton {
+                        anchors { right: parent.right; top: parent.top; rightMargin: 28; topMargin: 4 }
+                        width: 32; height: 32
+                        onClicked: menuWin.settingsRequested()
+                        Image { anchors.centerIn: parent; source: Theme.icon("settings-cog", parent.hovered ? "scarlet" : "dim"); width: 24; height: 24; smooth: false }
                     }
                     Row {
                         anchors.centerIn: parent

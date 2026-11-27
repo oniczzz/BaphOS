@@ -12,6 +12,11 @@ Singleton {
 
     readonly property var wallpapers: ["crimson-moon", "ritual", "forest", "cathedral", "sigil"]
 
+    function resetStory() {
+        adapter.storyStage = 0;
+        adapter.storySeen = [];
+    }
+
     function nextWallpaper() {
         const i = wallpapers.indexOf(adapter.wallpaper);
         adapter.wallpaper = wallpapers[(i + 1) % wallpapers.length];
@@ -31,6 +36,9 @@ Singleton {
             property string wallpaper: "crimson-moon"
             property bool animations: true      // живые обои и мозаика
             property bool widgets: true         // Гримуар, Око системы, Литания
+            property bool story: true           // сюжет (вирус культа) — только визуальный
+            property int storyStage: 0          // этап заражения
+            property var storySeen: []          // какие события сюжета уже были
         }
     }
 }
