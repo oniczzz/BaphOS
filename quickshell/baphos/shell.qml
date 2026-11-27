@@ -13,18 +13,20 @@ ShellRoot {
     property var altarScreen: Quickshell.screens[0]
 
     function toggleAltar(screen) {
-        if (altarOpen && (!screen || screen === altarScreen)) { altarOpen = false; return; }
+        if (altarOpen && (!screen || screen === altarScreen)) { altarOpen = false; Sfx.play("close"); return; }
         altarScreen = screen || focusedScreen() || Quickshell.screens[0];
         startOpen = false;
         altarOpen = true;
+        Sfx.play("open");
     }
     property var startScreen: Quickshell.screens[0]
 
     function toggleStart(screen) {
-        if (startOpen && (!screen || screen === startScreen)) { startOpen = false; return; }
+        if (startOpen && (!screen || screen === startScreen)) { startOpen = false; Sfx.play("close"); return; }
         startScreen = screen || focusedScreen() || Quickshell.screens[0];
         altarOpen = false;
         startOpen = true;
+        Sfx.play("open");
         Story.onStartOpened();
     }
 
@@ -61,6 +63,17 @@ ShellRoot {
         open: root.altarOpen
         onCloseRequested: root.altarOpen = false
         onLockRequested: lock.lock()
+    }
+
+    Osd {
+        screen: root.focusedScreen() || Quickshell.screens[0]
+    }
+
+    // звук входа: только если niri запущен меньше 90 с назад (а не при каждом перезапуске оболочки)
+    Process {
+        running: true
+        command: ["sh", "-c", "ps -o etimes= -C niri | sort -n | head -1"]
+        stdout: StdioCollector { onStreamFinished: if (Number(text.trim()) < 90) Sfx.play("login") }
     }
 
     Notifications {

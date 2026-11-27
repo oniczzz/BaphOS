@@ -16,9 +16,9 @@ PanelWindow {
 
     Connections {
         target: Story
-        function onGlitch(strength) { glitch.burst(strength) }
-        function onWhisper(text) { whisper.show(text) }
-        function onIntro() { intro.play() }
+        function onGlitch(strength) { glitch.burst(strength); Sfx.play("glitch"); }
+        function onWhisper(text) { whisper.show(text); Sfx.play("whisper"); }
+        function onIntro() { intro.play(); Sfx.play("glitch"); }
         function onLambWalk() { lamb.walk() }
     }
 

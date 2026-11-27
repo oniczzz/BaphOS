@@ -17,7 +17,7 @@ PanelWindow {
 
     property bool shown: false
     property int reveal: 0
-    readonly property int panelH: 700
+    readonly property int panelH: Math.min(740, cc.height - Theme.barHeight - 8)
 
     visible: true
     mask: Region { item: cc.shown ? catcher : nothing }
@@ -83,6 +83,8 @@ PanelWindow {
     }
 
     readonly property var bt: Bluetooth.defaultAdapter
+    // скриншот после того, как Алтарь закроется (чтобы его не было в кадре)
+    Timer { id: shotDelay; interval: 250; onTriggered: Quickshell.execDetached(["niri", "msg", "action", "screenshot"]) }
     property string uptime: ""
     FileView {
         id: readUptime
@@ -204,6 +206,8 @@ PanelWindow {
                     QuickTile { Layout.fillWidth: true; icon: Store.data.dnd ? "bell-off" : "bell"; label: "Не беспокоить"; sub: Store.data.dnd ? "тишина" : "выкл"; on: Store.data.dnd; onClicked: Store.data.dnd = !Store.data.dnd }
                     QuickTile { Layout.fillWidth: true; icon: "moon"; label: "Ночной свет"; sub: Store.data.nightLight ? "тёплый экран" : "выкл"; on: Store.data.nightLight; onClicked: Store.data.nightLight = !Store.data.nightLight }
                     QuickTile { Layout.fillWidth: true; icon: "sparkles"; label: "Живые обои"; sub: Store.data.animations ? "анимации" : "выкл"; on: Store.data.animations; onClicked: Store.data.animations = !Store.data.animations }
+                    QuickTile { Layout.fillWidth: true; icon: Store.data.sounds ? "volume-3" : "volume-x"; label: "Звуки"; sub: Store.data.sounds ? "колокол, шёпот" : "выкл"; on: Store.data.sounds; onClicked: Store.data.sounds = !Store.data.sounds }
+                    QuickTile { Layout.fillWidth: true; icon: "monitor"; label: "Скриншот"; sub: "выделить область"; onClicked: { cc.closeRequested(); shotDelay.start(); } }
                     QuickTile { Layout.fillWidth: true; icon: "skull"; label: "Сюжет"; sub: Store.data.story ? "этап " + Store.data.storyStage : "выкл"; on: Store.data.story; onClicked: Store.data.story = !Store.data.story }
                 }
 

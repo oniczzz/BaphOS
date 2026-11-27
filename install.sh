@@ -45,6 +45,7 @@ python3 art/icons.py assets/icons/BaphOS          # после курсора: �
 python3 art/fastfetch_logo.py fastfetch/logo.txt
 command -v rsvg-convert >/dev/null && python3 art/ui_icons.py   # иконки интерфейса (Pixelarticons, MIT)
 python3 art/frames.py                        # пиксельные рамки (9-slice)
+python3 art/sounds.py                        # звуки (синтез): колокол, шёпот, вход...
 
 link assets/icons/BaphOS     "$H/.local/share/icons/BaphOS"
 link fonts                   "$H/.local/share/fonts/BaphOS"     # Monocraft, Jacquard 24 (OFL)

@@ -13,7 +13,7 @@ Scope {
     property bool busy: false
     property string pending: ""
 
-    function lock() { message = ""; sessionLock.locked = true }
+    function lock() { message = ""; sessionLock.locked = true; Sfx.play("lock"); }
     function unlock() { sessionLock.locked = false }
 
     WlSessionLock {

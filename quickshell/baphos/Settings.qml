@@ -126,6 +126,12 @@ FloatingWindow {
                     onToggled: v => Store.data.animations = v
                 }
                 PixelSwitch {
+                    text: "Звуки"
+                    hint: "колокол уведомлений, шёпот культа, вход в систему"
+                    checked: Store.data.sounds
+                    onToggled: v => Store.data.sounds = v
+                }
+                PixelSwitch {
                     text: "Виджеты на столе"
                     hint: "Гримуар, Око системы, Литания"
                     checked: Store.data.widgets

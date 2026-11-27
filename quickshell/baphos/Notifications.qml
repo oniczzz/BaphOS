@@ -23,6 +23,7 @@ Scope {
         onNotification: n => {
             Inbox.add(n.appName, n.summary, n.body);
             if (Store.data.dnd && n.urgency !== NotificationUrgency.Critical) return;   // «Не беспокоить»
+            Sfx.play("bell");
             n.tracked = true;
             n.closed.connect(() => root.remove(n));
             root.popups = [n].concat(root.popups).slice(0, 5);
