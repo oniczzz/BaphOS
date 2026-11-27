@@ -54,6 +54,7 @@ command -v fc-cache >/dev/null && fc-cache -f "$H/.local/share/fonts" >/dev/null
 mkdir -p -- "$H/.local/state/baphos"          # настройки оболочки (обои, сюжет)
 link quickshell/baphos       "$H/.config/quickshell/baphos"
 link bin/niri-window-switch   "$H/.local/bin/niri-window-switch"   # Mod+Tab: список окон
+link bin/baphos-shot          "$H/.local/bin/baphos-shot"          # Mod+Shift+S: вырезать, сохранить, скопировать
 link kitty                   "$H/.config/kitty"                  # терминал по умолчанию
 # терминал по умолчанию для xdg-terminal-exec (Nautilus «Открыть в терминале» и т.п.)
 printf 'kitty.desktop\n' >"$H/.config/xdg-terminals.list"

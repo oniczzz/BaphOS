@@ -129,6 +129,17 @@ ShellRoot {
         function close(): void { Story.ritualOpen = false; Story.basementOpen = false }
     }
 
+    Variants {
+        model: Quickshell.screens
+        ScreenshotTool {}
+    }
+
+    IpcHandler {
+        target: "shot"
+        function region(): void { Shot.begin() }
+        function cancel(): void { Shot.cancel() }
+    }
+
     IpcHandler {
         target: "game"
         function toggle(): void { Store.data.gameMode = !Store.data.gameMode }

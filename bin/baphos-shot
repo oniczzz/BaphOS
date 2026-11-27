@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+"""BaphOS: вырезать область из замороженного кадра экрана, сохранить и/или скопировать.
+
+  baphos-shot <кадр.png> <x> <y> <w> <h> <copy|save|both>
+
+Сохраняет в ~/Pictures/Screenshots/BaphOS-ГГГГММДД-ЧЧММСС.png (для copy — во временный файл),
+копирует в буфер (wl-copy), присылает уведомление с миниатюрой.
+"""
+import os
+import subprocess
+import sys
+import tempfile
+import time
+
+from PIL import Image
+
+
+def main():
+    src, x, y, w, h, mode = sys.argv[1], *map(int, sys.argv[2:6]), sys.argv[6]
+    img = Image.open(src)
+    x, y = max(0, x), max(0, y)
+    w, h = max(1, min(w, img.width - x)), max(1, min(h, img.height - y))
+    part = img.crop((x, y, x + w, y + h))
+
+    if mode in ("save", "both"):
+        folder = os.path.expanduser("~/Pictures/Screenshots")
+        os.makedirs(folder, exist_ok=True)
+        out = os.path.join(folder, time.strftime("BaphOS-%Y%m%d-%H%M%S.png"))
+    else:
+        fd, out = tempfile.mkstemp(prefix="baphos-shot-", suffix=".png", dir=os.environ.get("XDG_RUNTIME_DIR"))
+        os.close(fd)
+    part.save(out)
+
+    if mode in ("copy", "both"):
+        with open(out, "rb") as f:
+            subprocess.run(["wl-copy", "--type", "image/png"], stdin=f, check=False)
+
+    what = {"copy": "скопирован в буфер", "save": "сохранён", "both": "сохранён и скопирован"}[mode]
+    body = f"{w}×{h}" + (f" · {out.replace(os.path.expanduser('~'), '~')}" if mode != "copy" else "")
+    subprocess.run(["notify-send", "-a", "BaphOS", "-i", out, f"Снимок {what}", body], check=False)
+    print(out)
+
+
+if __name__ == "__main__":
+    main()

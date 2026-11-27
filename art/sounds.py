@@ -129,6 +129,20 @@ def lock():
     save("lock.wav", out, 0.5)
 
 
+def shutter():
+    """Затвор: щелчок шторки и короткий шорох."""
+    rnd = random.Random(7)
+    n = int(RATE * 0.18)
+    out = []
+    for i in range(n):
+        t = i / RATE
+        click = math.exp(-t / 0.004) * (1 if i % 40 < 20 else -1)
+        click2 = math.exp(-max(0, t - 0.07) / 0.004) * (1 if i % 30 < 15 else -1) * (t > 0.07)
+        hiss = rnd.uniform(-1, 1) * math.exp(-t / 0.05) * 0.3
+        out.append(click + 0.7 * click2 + hiss)
+    save("shutter.wav", out, 0.35)
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     bell()
@@ -139,6 +153,7 @@ def main():
     glitch()
     tick()
     lock()
+    shutter()
     print(f"sounds -> {OUT}")
 
 

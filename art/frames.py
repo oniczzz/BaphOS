@@ -91,6 +91,13 @@ def main():
         spine.putpixel((x, 2), (160, 0, 0, 255))      # стежок
     spine.putpixel((5, 3), (107, 0, 0, 255)); spine.putpixel((6, 3), (107, 0, 0, 255))
     spine.resize((24, 16), Image.NEAREST).save(OUT / "spine.png")
+    # «бегущие муравьи» рамки скриншота: 8 px алого, 8 px чёрного; горизонтальная и вертикальная
+    ants = Image.new("RGBA", (16, 2), (0, 0, 0, 255))
+    for x in range(8):
+        for y in range(2):
+            ants.putpixel((x, y), (255, 26, 26, 255))
+    ants.save(OUT / "ants-h.png")
+    ants.transpose(Image.Transpose.ROTATE_90).save(OUT / "ants-v.png")
     print(f"frames -> {OUT} (panel border {b1}px, buttons {b2}px)")
 
 

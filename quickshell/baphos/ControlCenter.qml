@@ -84,7 +84,7 @@ PanelWindow {
 
     readonly property var bt: Bluetooth.defaultAdapter
     // скриншот после того, как Алтарь закроется (чтобы его не было в кадре)
-    Timer { id: shotDelay; interval: 250; onTriggered: Quickshell.execDetached(["niri", "msg", "action", "screenshot"]) }
+    Timer { id: shotDelay; interval: 350; onTriggered: Shot.begin() }
     property string uptime: ""
     FileView {
         id: readUptime
