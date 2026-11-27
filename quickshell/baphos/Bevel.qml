@@ -1,29 +1,29 @@
-// Объёмная рамка в стиле Win98: 2 px света сверху-слева и 2 px тени снизу-справа.
-// sunken — вдавленная (поле ввода, нажатая кнопка, «колодец» трея). Дети кладутся внутрь.
+// Пиксельная рамка BaphOS (9-slice из art/frames.py), без сглаживания.
+//   kind: "panel" — узорная (рога на углах, алая жилка с «цепью»), "well" — вдавленное поле,
+//         "btn" / "btn-hover" / "btn-active" — кнопки со срезанными углами.
+// sunken (для совместимости) = "well". Дети кладутся внутрь, с отступом inset.
 import QtQuick
 
 Item {
-    id: bevel
+    id: frame
     property bool sunken: false
-    property color face: Theme.face
+    property string kind: sunken ? "well" : "panel"
+    property color face: "transparent"          // не нужен: заливка нарисована в рамке
     default property alias content: inner.data
-    readonly property int inset: 2
+    readonly property int border: kind === "panel" ? 16 : 6
+    property int inset: kind === "panel" ? 11 : 4
 
-    Rectangle { anchors.fill: parent; color: bevel.face }
-
-    // внешняя пара линий
-    Rectangle { x: 0; y: 0; width: parent.width; height: 1; color: bevel.sunken ? Theme.bevelLo : Theme.bevelHi }
-    Rectangle { x: 0; y: 0; width: 1; height: parent.height; color: bevel.sunken ? Theme.bevelLo : Theme.bevelHi }
-    Rectangle { x: 0; y: parent.height - 1; width: parent.width; height: 1; color: bevel.sunken ? Theme.bevelHi : Theme.bevelLo }
-    Rectangle { x: parent.width - 1; y: 0; width: 1; height: parent.height; color: bevel.sunken ? Theme.bevelHi : Theme.bevelLo }
-    // внутренняя пара
-    Rectangle { x: 1; y: 1; width: parent.width - 2; height: 1; color: bevel.sunken ? Theme.bevelLoIn : Theme.bevelHiIn }
-    Rectangle { x: 1; y: 1; width: 1; height: parent.height - 2; color: bevel.sunken ? Theme.bevelLoIn : Theme.bevelHiIn }
-    Rectangle { x: 1; y: parent.height - 2; width: parent.width - 2; height: 1; color: bevel.sunken ? Theme.bevelHiIn : Theme.bevelLoIn }
-    Rectangle { x: parent.width - 2; y: 1; width: 1; height: parent.height - 2; color: bevel.sunken ? Theme.bevelHiIn : Theme.bevelLoIn }
+    BorderImage {
+        anchors.fill: parent
+        source: Theme.asset("ui/frame-" + frame.kind + ".png")
+        border { left: frame.border; right: frame.border; top: frame.border; bottom: frame.border }
+        horizontalTileMode: BorderImage.Repeat
+        verticalTileMode: BorderImage.Repeat
+        smooth: false
+    }
 
     Item {
         id: inner
-        anchors { fill: parent; margins: bevel.inset }
+        anchors { fill: parent; margins: frame.inset }
     }
 }

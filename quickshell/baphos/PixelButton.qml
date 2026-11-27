@@ -1,15 +1,17 @@
-// Кнопка Win98 в палитре BaphOS: выпуклая; нажата или active — вдавлена, active ещё и «шахматка».
+// Пиксельная кнопка: срезанные углы; наведение — алый контур; нажата/active — алый контур,
+// тёмно-красная заливка и «шахматка» (память о Win98) и сдвиг содержимого на 1 px вниз.
 import QtQuick
 
 Bevel {
     id: btn
     property bool active: false
     property alias hovered: area.containsMouse
+    readonly property bool down: area.pressed || active
     signal clicked(var mouse)
     signal wheel(var wheel)
 
-    sunken: area.pressed || active
-    face: area.containsMouse && !sunken ? Theme.faceHover : Theme.face
+    kind: down ? "btn-active" : (area.containsMouse ? "btn-hover" : "btn")
+    sunken: down
 
     Image {
         anchors.fill: parent
@@ -17,6 +19,7 @@ Bevel {
         source: Theme.asset("ui/checker.png")
         fillMode: Image.Tile
         smooth: false
+        opacity: 0.6
     }
 
     MouseArea {

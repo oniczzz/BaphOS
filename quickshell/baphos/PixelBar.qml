@@ -7,11 +7,11 @@ Bevel {
     property color fill: value > 0.85 ? Theme.scarlet : Theme.crimson
     sunken: true
     face: Theme.bg
-    implicitHeight: 16
+    implicitHeight: 18
 
     Row {
         id: row
-        anchors { fill: parent; margins: 1 }
+        anchors { fill: parent; margins: 0 }
         spacing: 2
         readonly property int n: Math.max(1, Math.floor((width + 2) / 8))
         Repeater {

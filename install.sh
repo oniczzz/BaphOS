@@ -43,6 +43,7 @@ python3 art/icons.py assets/icons/BaphOS          # после курсора: �
 [[ -f art/wallpapers.py ]] && python3 art/wallpapers.py assets/wallpapers
 python3 art/fastfetch_logo.py fastfetch/logo.txt
 command -v rsvg-convert >/dev/null && python3 art/ui_icons.py   # иконки интерфейса (Pixelarticons, MIT)
+python3 art/frames.py                        # пиксельные рамки (9-slice)
 
 link assets/icons/BaphOS     "$H/.local/share/icons/BaphOS"
 link fonts                   "$H/.local/share/fonts/BaphOS"     # Pixelify Sans, Jacquard 24, Press Start 2P (OFL)

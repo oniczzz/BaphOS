@@ -29,7 +29,7 @@ Singleton {
     readonly property string fontGothic: "Jacquard 24" // логотип, только латиница: 24 / 48 px
     readonly property string fontMono: "Cozette"       // моно: 13 px
 
-    readonly property int barHeight: 40
+    readonly property int barHeight: 44
     readonly property int border: 2
 
     // графика из репозитория (assets — симлинк на ../../assets)

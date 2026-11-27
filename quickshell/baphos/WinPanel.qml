@@ -8,7 +8,7 @@ Bevel {
     default property alias body: content.data
 
     implicitWidth: 260
-    implicitHeight: content.childrenRect.height + 22 + 14
+    implicitHeight: content.childrenRect.height + 22 + inset * 2 + 8
 
     Rectangle {
         id: titleBar

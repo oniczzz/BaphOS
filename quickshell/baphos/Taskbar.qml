@@ -18,15 +18,22 @@ PanelWindow {
     screen: modelData
     anchors { bottom: true; left: true; right: true }
     implicitHeight: Theme.barHeight
-    color: Theme.face
+    color: "#0c0606"
     WlrLayershell.namespace: "baphos-taskbar"
 
-    // верхняя грань панели — выпуклая
-    Rectangle { x: 0; y: 0; width: parent.width; height: 1; color: Theme.bevelHi }
-    Rectangle { x: 0; y: 1; width: parent.width; height: 1; color: Theme.bevelHiIn }
+    // фон панели — узорная рамка, видна только её верхняя кромка (алая жилка с «цепью»)
+    BorderImage {
+        x: -16; y: -2
+        width: parent.width + 32; height: parent.height + 20
+        source: Theme.asset("ui/frame-panel.png")
+        border { left: 16; right: 16; top: 16; bottom: 16 }
+        horizontalTileMode: BorderImage.Repeat
+        verticalTileMode: BorderImage.Repeat
+        smooth: false
+    }
 
     RowLayout {
-        anchors { fill: parent; topMargin: 4; bottomMargin: 2; leftMargin: 3; rightMargin: 3 }
+        anchors { fill: parent; topMargin: 9; bottomMargin: 2; leftMargin: 3; rightMargin: 3 }
         spacing: 4
 
         // ── Пуск ──
