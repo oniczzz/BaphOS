@@ -8,6 +8,7 @@ ShellRoot {
     id: root
     property bool startOpen: false
     property bool settingsOpen: false
+    property bool keysOpen: false
     property var startScreen: Quickshell.screens[0]
 
     function toggleStart(screen) {
@@ -54,6 +55,17 @@ ShellRoot {
     Settings {
         open: root.settingsOpen
         onDismissed: root.settingsOpen = false
+    }
+
+    KeyScroll {
+        screen: root.focusedScreen() || Quickshell.screens[0]
+        open: root.keysOpen
+        onDismissed: root.keysOpen = false
+    }
+
+    IpcHandler {
+        target: "keys"
+        function toggle(): void { root.keysOpen = !root.keysOpen }
     }
 
     IpcHandler {

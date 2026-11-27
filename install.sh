@@ -50,6 +50,7 @@ link fonts                   "$H/.local/share/fonts/BaphOS"     # Pixelify Sans,
 command -v fc-cache >/dev/null && fc-cache -f "$H/.local/share/fonts" >/dev/null
 mkdir -p -- "$H/.local/state/baphos"          # настройки оболочки (обои, сюжет)
 link quickshell/baphos       "$H/.config/quickshell/baphos"
+link bin/niri-window-switch   "$H/.local/bin/niri-window-switch"   # Mod+Tab: список окон
 link foot/foot.ini            "$H/.config/foot/foot.ini"
 link fastfetch               "$H/.config/fastfetch"
 link fish/functions/fish_prompt.fish "$H/.config/fish/functions/fish_prompt.fish"

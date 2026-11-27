@@ -389,8 +389,7 @@ binds {
 
     // Mod-Shift-/, which is usually the same as Mod-?,
     // shows a list of important hotkeys.
-    Mod+Shift+Slash { show-hotkey-overlay; }
-
+    Mod+Shift+Slash hotkey-overlay-title="Свиток клавиш" { spawn "qs" "-c" "baphos" "ipc" "call" "keys" "toggle"; }
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T hotkey-overlay-title="Терминал" { spawn "foot"; }
     Super+Alt+L hotkey-overlay-title="Заблокировать" { spawn "qs" "-c" "baphos" "ipc" "call" "lock" "lock"; }

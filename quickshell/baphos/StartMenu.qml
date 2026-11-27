@@ -73,7 +73,19 @@ PanelWindow {
         .filter(e => !e.noDisplay)
         .sort((a, b) => a.name.localeCompare(b.name))
     readonly property var apps: {
-        const q = search.text.trim().toLowerCase();
+        const raw = search.text.trim();
+        // ?запрос — поиск в сети, >команда — выполнить в терминале
+        if (raw.startsWith("?") && raw.length > 1) {
+            const q = raw.slice(1).trim();
+            return [{ name: "Искать в сети: " + q, icon: "web-browser",
+                      execute: () => Quickshell.execDetached(["xdg-open", "https://duckduckgo.com/?q=" + encodeURIComponent(q)]) }];
+        }
+        if (raw.startsWith(">") && raw.length > 1) {
+            const c = raw.slice(1).trim();
+            return [{ name: "Выполнить: " + c, icon: "utilities-terminal",
+                      execute: () => Quickshell.execDetached(["foot", "--hold", "sh", "-c", c]) }];
+        }
+        const q = raw.toLowerCase();
         if (!q) return allApps;
         return allApps.filter(e =>
             [e.name, e.genericName, e.comment, (e.keywords || []).join(" ")]
@@ -200,7 +212,7 @@ PanelWindow {
                         Keys.onUpPressed: list.decrementCurrentIndex()
                         Keys.onReturnPressed: menuWin.launch(menuWin.apps[list.currentIndex])
                         Keys.onEnterPressed: menuWin.launch(menuWin.apps[list.currentIndex])
-                        PixelText { visible: !search.text; text: "Призвать программу..."; color: Theme.dim; anchors.verticalCenter: parent.verticalCenter }
+                        PixelText { visible: !search.text; text: "Призвать...   ?поиск   >команда"; color: Theme.dim; anchors.verticalCenter: parent.verticalCenter }
                     }
                 }
 
