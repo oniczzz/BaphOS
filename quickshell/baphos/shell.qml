@@ -26,6 +26,8 @@ ShellRoot {
         Wallpaper {}
     }
 
+    Widgets {}
+
     Variants {
         model: Quickshell.screens
         Taskbar {

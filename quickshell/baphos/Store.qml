@@ -30,6 +30,7 @@ Singleton {
             id: adapter
             property string wallpaper: "crimson-moon"
             property bool animations: true      // живые обои и мозаика
+            property bool widgets: true         // Гримуар, Око системы, Литания
         }
     }
 }

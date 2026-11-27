@@ -43,7 +43,7 @@ Rectangle {
         }
         PixelText {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: Qt.formatDateTime(new Date(), "dddd, d MMMM")
+            text: Qt.locale("ru_RU").toString(new Date(), "dddd, d MMMM")
             color: Theme.dim
         }
 
