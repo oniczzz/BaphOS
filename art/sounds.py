@@ -9,6 +9,11 @@
   glitch.wav    глитч: рваный цифровой треск
   tick.wav      громкость/яркость: короткий щелчок
   lock.wav      блокировка: глухой удар
+  talk.wav      уведомление-диалог: короткий «голосовой» блип на букву
+  slam.wav      баннер на весь экран: тяжёлый удар с гулом
+  portal-in.wav окно уходит в портал: гул вниз
+  portal-out.wav окно выходит из портала: гул вверх
+  step.wav      карта подвала: шаг между комнатами
 
 Запуск: python3 art/sounds.py   -> assets/sounds/
 """
@@ -143,6 +148,55 @@ def shutter():
     save("shutter.wav", out, 0.35)
 
 
+def talk():
+    """Голосовой блип: 35 мс квадрата с лёгким вибрато."""
+    n = int(RATE * 0.035)
+    out = [square(560 + 30 * math.sin(i / RATE * 2 * math.pi * 60), i / RATE) * env(i, n, 0.002, 0.012) for i in range(n)]
+    save("talk.wav", out, 0.22)
+
+
+def slam():
+    """Удар: низкий синус с падением частоты, шум удара и долгий гул."""
+    rnd = random.Random(7)
+    n = int(RATE * 1.6)
+    out = []
+    ph = 0.0
+    for i in range(n):
+        t = i / RATE
+        f = 40 + 70 * math.exp(-t / 0.08)
+        ph += 2 * math.pi * f / RATE
+        boom = math.sin(ph) * math.exp(-t / 0.5)
+        hit = rnd.uniform(-1, 1) * math.exp(-t / 0.03) * 0.6
+        drone = (math.sin(2 * math.pi * 55 * t) + 0.5 * math.sin(2 * math.pi * 82.4 * t)) * 0.25 * math.exp(-t / 0.9)
+        out.append((boom + hit + drone) * env(i, n, 0.001, 0.4))
+    save("slam.wav", out, 0.55)
+
+
+def portal(name, up):
+    """Гул портала: свип синуса с биением и шуршанием."""
+    rnd = random.Random(11)
+    n = int(RATE * 0.45)
+    out = []
+    ph1 = ph2 = 0.0
+    lp = 0.0
+    for i in range(n):
+        x = i / n
+        k = x if up else 1 - x
+        f = 120 + 520 * k * k
+        ph1 += 2 * math.pi * f / RATE
+        ph2 += 2 * math.pi * f * 1.012 / RATE
+        lp += 0.08 * (rnd.uniform(-1, 1) - lp)
+        out.append((math.sin(ph1) + math.sin(ph2) + 1.5 * lp) * env(i, n, 0.03, 0.12))
+    save(name, out, 0.3)
+
+
+def step():
+    """Шаг: глухой короткий удар."""
+    n = int(RATE * 0.09)
+    out = [math.sin(2 * math.pi * (90 + 60 * math.exp(-i / RATE / 0.02)) * i / RATE) * math.exp(-i / RATE / 0.03) for i in range(n)]
+    save("step.wav", out, 0.35)
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     bell()
@@ -154,6 +208,11 @@ def main():
     tick()
     lock()
     shutter()
+    talk()
+    slam()
+    portal("portal-in.wav", False)
+    portal("portal-out.wav", True)
+    step()
     print(f"sounds -> {OUT}")
 
 

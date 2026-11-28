@@ -8,11 +8,12 @@ Singleton {
     id: root
     property var last: ({})
 
-    function play(name) {
+    // gap — минимум мс между одинаковыми звуками; volume — громкость 0..1
+    function play(name, gap, volume) {
         if (!Store.data.sounds || Mode.quiet) return;
         const now = Date.now();
-        if (now - (root.last[name] || 0) < 150) return;
+        if (now - (root.last[name] || 0) < (gap ?? 150)) return;
         root.last[name] = now;
-        Quickshell.execDetached(["pw-play", "--volume", "0.55", Theme.asset("sounds/" + name + ".wav")]);
+        Quickshell.execDetached(["pw-play", "--volume", String(volume ?? 0.55), Theme.asset("sounds/" + name + ".wav")]);
     }
 }
