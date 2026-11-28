@@ -10,6 +10,15 @@ ShellRoot {
     property bool settingsOpen: false
     property bool keysOpen: false
     property bool altarOpen: false
+    property bool mapOpen: false
+    property string mapOutput: ""
+    function toggleMap() {
+        if (mapOpen) { mapOpen = false; Sfx.play("close"); return; }
+        mapOutput = Niri.focusedOutput || (Quickshell.screens[0]?.name ?? "");
+        startOpen = false; altarOpen = false;
+        mapOpen = true;
+        Sfx.play("open");
+    }
     property var altarScreen: Quickshell.screens[0]
 
     function toggleAltar(screen) {
@@ -81,6 +90,18 @@ ShellRoot {
     }
 
     Lock { id: lock }
+
+    Variants {
+        model: Quickshell.screens
+        DungeonMap {
+            open: root.mapOpen && root.mapOutput === modelData.name
+            onCloseRequested: { root.mapOpen = false; Sfx.play("close"); }
+        }
+    }
+    IpcHandler {
+        target: "map"
+        function toggle(): void { root.toggleMap() }
+    }
     IpcHandler {
         target: "banner"
         function say(text: string): void { Banner.show(text, Theme.scarlet) }

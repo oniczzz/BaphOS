@@ -412,7 +412,7 @@ binds {
     Super+Alt+L hotkey-overlay-title="Заблокировать" { spawn "qs" "-c" "baphos" "ipc" "call" "lock" "lock"; }
     Mod+B hotkey-overlay-title="Helium" { spawn "helium-browser"; }
     Alt+Tab hotkey-overlay-title="Предыдущее окно" { focus-window-previous; }
-    Mod+Tab hotkey-overlay-title="Список окон" { spawn "/home/onz/.local/bin/niri-window-switch"; }
+    Mod+Tab hotkey-overlay-title="Карта подвала (окна)" { spawn "qs" "-c" "baphos" "ipc" "call" "map" "toggle"; }
     Mod+Shift+S hotkey-overlay-title="Скриншот области" { spawn "qs" "-c" "baphos" "ipc" "call" "shot" "region"; }
     Mod+Alt+S hotkey-overlay-title="Steam" { spawn "steam"; }
     Mod+Shift+D hotkey-overlay-title="Discord" { spawn "discord"; }
