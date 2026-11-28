@@ -81,6 +81,15 @@ ShellRoot {
     }
 
     Lock { id: lock }
+    IpcHandler {
+        target: "banner"
+        function say(text: string): void { Banner.show(text, Theme.scarlet) }
+    }
+
+    Variants {
+        model: Quickshell.screens
+        BannerOverlay {}
+    }
 
     StartMenu {
         screen: root.startScreen

@@ -13,8 +13,19 @@ Scope {
     property bool busy: false
     property string pending: ""
 
-    function lock() { message = ""; sessionLock.locked = true; Sfx.play("lock"); }
-    function unlock() { sessionLock.locked = false }
+    // вручную — сначала баннер «душа сохранена», потом замок; по простою — сразу
+    function lock() {
+        if (sessionLock.locked || delayed.running) return;
+        if (Banner.enabled()) { Banner.show("ДУША СОХРАНЕНА", Theme.scarlet); delayed.restart(); }
+        else lockNow();
+    }
+    function lockNow() { delayed.stop(); message = ""; sessionLock.locked = true; Sfx.play("lock"); }
+    function unlock() {
+        if (!sessionLock.locked) return;
+        sessionLock.locked = false;
+        Banner.show("ВОЗВРАЩЕНИЕ", Theme.text);
+    }
+    Timer { id: delayed; interval: 1300; onTriggered: root.lockNow() }
 
     WlSessionLock {
         id: sessionLock
@@ -56,7 +67,7 @@ Scope {
         timeout: Math.max(1, Store.data.lockMinutes) * 60
         enabled: Store.data.lockMinutes > 0
         respectInhibitors: true
-        onIsIdleChanged: if (isIdle) root.lock()
+        onIsIdleChanged: if (isIdle) root.lockNow()
     }
 
     IpcHandler {

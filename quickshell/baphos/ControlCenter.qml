@@ -148,8 +148,7 @@ PanelWindow {
                     }
                     Item { Layout.fillWidth: true }
                     Repeater {
-                        model: [["lock", null], ["logout", ["niri", "msg", "action", "quit", "--skip-confirmation"]],
-                                ["reload", ["systemctl", "reboot"]], ["power", ["systemctl", "poweroff"]]]
+                        model: [["lock", null], ["logout", "logout"], ["reload", "reboot"], ["power", "poweroff"]]
                         PixelButton {
                             id: pb
                             required property var modelData
@@ -158,7 +157,7 @@ PanelWindow {
                             active: armed
                             onClicked: {
                                 if (!modelData[1]) { cc.closeRequested(); cc.lockRequested(); return; }
-                                if (armed) Quickshell.execDetached(modelData[1]); else { armed = true; disarm.restart(); }
+                                if (armed) { cc.closeRequested(); Banner.leave(modelData[1]); } else { armed = true; disarm.restart(); }
                             }
                             Timer { id: disarm; interval: 3000; onTriggered: pb.armed = false }
                             Image { anchors.centerIn: parent; source: Theme.icon(pb.modelData[0], pb.armed || pb.hovered ? "scarlet" : "bone"); width: 24; height: 24; smooth: false }

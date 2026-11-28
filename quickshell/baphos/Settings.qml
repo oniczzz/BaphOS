@@ -69,6 +69,7 @@ FloatingWindow {
             PixelSwitch { text: "Игровой режим сам, когда окно во весь экран"; hint: "игры и видео без глитчей, звуков и всплывающих уведомлений"; checked: Store.data.autoGameMode; onToggled: v => Store.data.autoGameMode = v }
             PixelSwitch { text: "Звуки"; hint: "колокол уведомлений, шёпот культа, вход в систему"; checked: Store.data.sounds; onToggled: v => Store.data.sounds = v }
             PixelSwitch { text: "Виджеты на столе"; hint: "Гримуар, Око системы, Литания"; checked: Store.data.widgets; onToggled: v => Store.data.widgets = v }
+            PixelSwitch { text: "Баннеры на весь экран"; hint: "«Душа сохранена» при блокировке, «Ты покинул нас» при выходе"; checked: Store.data.banners; onToggled: v => Store.data.banners = v }
             PixelSwitch { text: "Не беспокоить"; hint: "уведомления только в истории Алтаря"; checked: Store.data.dnd; onToggled: v => Store.data.dnd = v }
         }
     }

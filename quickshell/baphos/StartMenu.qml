@@ -91,9 +91,9 @@ PanelWindow {
     ]
     property int armed: -1
     readonly property var powerItems: [
-        { label: "ВЫЙТИ", hint: "закончить сеанс", cmd: ["niri", "msg", "action", "quit", "--skip-confirmation"] },
-        { label: "ПЕРЕЗАГРУЗКА", hint: "заново", cmd: ["systemctl", "reboot"] },
-        { label: "ВЫКЛЮЧЕНИЕ", hint: "уснуть", cmd: ["systemctl", "poweroff"] },
+        { label: "ВЫЙТИ", hint: "закончить сеанс", cmd: "logout" },
+        { label: "ПЕРЕЗАГРУЗКА", hint: "заново", cmd: "reboot" },
+        { label: "ВЫКЛЮЧЕНИЕ", hint: "уснуть", cmd: "poweroff" },
         { label: "НАЗАД", hint: "", cmd: null },
     ]
     readonly property var items: page === "power" ? powerItems : mainItems
@@ -101,7 +101,7 @@ PanelWindow {
         if (page === "power") {
             const it = powerItems[i];
             if (!it.cmd) { page = "main"; sel = 7; armed = -1; return; }
-            if (armed === i) Quickshell.execDetached(it.cmd); else { armed = i; disarm.restart(); }
+            if (armed === i) { menuWin.closeRequested(); Banner.leave(it.cmd); } else { armed = i; disarm.restart(); }
             return;
         }
         mainItems[i].act();
