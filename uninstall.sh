@@ -8,7 +8,7 @@ H="${HOME:?HOME не задан}"
 
 for dst in "$H/.config/quickshell/baphos" "$H/.local/share/icons/BaphOS" "$H/.local/share/fonts/BaphOS" "$H/.local/bin/niri-window-switch" "$H/.local/bin/baphos-shot" "$H/.local/bin/baphos-save-monitors" "$H/.config/kitty" "$H/.config/fontconfig/conf.d/50-baphos-monocraft.conf" "$H/.config/foot/foot.ini" \
            "$H/.config/fastfetch" "$H/.config/fish/functions/fish_prompt.fish" "$H/.config/fish/conf.d/baphos.fish" "$H/.config/fish/functions/ff.fish" \
-           "$H/.config/gtk-3.0/gtk.css" "$H/.config/gtk-4.0/gtk.css" "$H/.config/qt6ct/colors/BaphOS.conf"; do
+           "$H/.config/gtk-3.0/gtk.css" "$H/.config/gtk-4.0/gtk.css" "$H/.config/qt6ct/colors/BaphOS.conf" "$H/.config/kdeglobals" "$H/.config/gtk-3.0/settings.ini" "$H/.config/gtk-4.0/settings.ini"; do
   if [[ -L "$dst" && "$(readlink -- "$dst")" == "$REPO"/* ]]; then
     rm -- "$dst"
     echo "убран $dst"

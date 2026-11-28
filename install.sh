@@ -73,6 +73,9 @@ fi
 link gtk/gtk.css              "$H/.config/gtk-3.0/gtk.css"
 link gtk/gtk.css              "$H/.config/gtk-4.0/gtk.css"
 link qt/BaphOS.conf           "$H/.config/qt6ct/colors/BaphOS.conf"
+link gtk/settings-gtk3.ini     "$H/.config/gtk-3.0/settings.ini"
+link gtk/settings-gtk4.ini     "$H/.config/gtk-4.0/settings.ini"
+link kde/kdeglobals           "$H/.config/kdeglobals"              # Qt/KDE: тёмная схема, палитра, шрифт, иконки
 
 # qt6ct: стиль Fusion + палитра BaphOS (файл с абсолютным путём — пишется здесь, не симлинк)
 QT="$H/.config/qt6ct/qt6ct.conf"
