@@ -98,6 +98,11 @@ def main():
             ants.putpixel((x, y), (255, 26, 26, 255))
     ants.save(OUT / "ants-h.png")
     ants.transpose(Image.Transpose.ROTATE_90).save(OUT / "ants-v.png")
+    # полутоновые точки для алой полосы Пуска (плитка 8x8, x2): тёмно-алые точки на прозрачном
+    ht = Image.new("RGBA", (8, 8), (0, 0, 0, 0))
+    for (x, y) in [(1, 1), (2, 1), (1, 2), (2, 2), (5, 5), (6, 5), (5, 6), (6, 6), (5, 1), (1, 5)]:
+        ht.putpixel((x, y), (150, 0, 0, 255))
+    ht.resize((16, 16), Image.NEAREST).save(OUT / "halftone.png")
     print(f"frames -> {OUT} (panel border {b1}px, buttons {b2}px)")
 
 

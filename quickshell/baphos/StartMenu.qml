@@ -1,10 +1,10 @@
-// BaphOS: Пуск — раскрытый гримуар.
-//   левая страница: свечи, дышащий сигил, BaphOS, «Избранное» (3x2), питание и Настройки
-//   корешок с прошивкой; правая страница: поиск (?сеть, >команда) и все программы
-//   (правый клик по программе — в избранное / убрать).
-// Раскрывается снизу ступенями по 8 px, строки списка проявляются каскадом. Клик мимо или Esc — закрыть.
+// BaphOS: Пуск в духе меню Persona 5 — своя графика, своя палитра.
+//   Алая полоса с полутоном влетает наискось; слева пункты на косых лентах лесенкой; выбранный —
+//   рваная алая клякса, белая лента, чёрный текст, лёгкая дрожь; справа косая «карточка статуса».
+//   «ПРИЗВАТЬ» — поиск и все программы (можно сразу печатать), «ПОКИНУТЬ» — питание с подтверждением.
+//   Клавиши: ↑/↓, Enter, Esc (назад/закрыть). Мышь: наведение выбирает, клик — действие.
 import QtQuick
-import QtQuick.Layouts
+import QtQuick.Shapes
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
@@ -18,14 +18,14 @@ PanelWindow {
     signal launched()
 
     property bool shown: false
-    property int reveal: 0
-    property int tick: 0
-    readonly property int panelW: 780
-    readonly property int panelH: Math.min(580, menuWin.height - Theme.barHeight - 8)
+    property real t: 0                  // 0..1 — проявление (полоса, пункты)
+    property int tick: 0                // дрожь выбранного пункта
+    property string page: "main"        // main | apps | power
+    property int sel: 0
 
     // окно живёт всегда (иначе первое открытие ждёт ~1 с); закрыто — пустая маска, клики насквозь
     visible: true
-    mask: Region { item: menuWin.shown ? catcher : nothing }
+    mask: Region { item: menuWin.shown ? root : nothing }
     Item { id: nothing; width: 0; height: 0 }
     anchors { top: true; bottom: true; left: true; right: true }
     color: "transparent"
@@ -36,38 +36,24 @@ PanelWindow {
 
     onOpenChanged: {
         if (open) {
-            search.text = "";
-            list.currentIndex = 0;
-            tick = 0;
-            reveal = Store.data.animations ? 0 : panelH;
+            page = "main"; sel = 0; search.text = "";
             shown = true;
-            search.forceActiveFocus();
-        }
-        stepper.restart();
-    }
-    Timer {
-        id: stepper
-        interval: 16; repeat: true
-        onTriggered: {
-            if (menuWin.open) { menuWin.reveal = Math.min(menuWin.panelH, menuWin.reveal + 48); if (menuWin.reveal >= menuWin.panelH) stop(); }
-            else { menuWin.reveal = Math.max(0, menuWin.reveal - menuWin.panelH / 3); if (menuWin.reveal <= 0) { stop(); menuWin.shown = false; } }
+            if (Store.data.animations && !Mode.calm) { t = 0; showAnim.restart(); } else t = 1;
+            keys.forceActiveFocus();
+        } else {
+            if (Store.data.animations && !Mode.calm) hideAnim.restart(); else { t = 0; shown = false; }
         }
     }
-    Timer { interval: 125; repeat: true; running: menuWin.shown && Store.data.animations; onTriggered: menuWin.tick++ }
+    NumberAnimation { id: showAnim; target: menuWin; property: "t"; from: 0; to: 1; duration: 420; easing.type: Easing.OutCubic }
+    NumberAnimation { id: hideAnim; target: menuWin; property: "t"; to: 0; duration: 140; easing.type: Easing.InCubic
+        onFinished: menuWin.shown = false }
+    Timer { interval: 220; repeat: true; running: menuWin.shown && Store.data.animations; onTriggered: menuWin.tick++ }
 
     // ── программы ──
     readonly property var allApps: DesktopEntries.applications.values
         .filter(e => !e.noDisplay)
         .sort((a, b) => a.name.localeCompare(b.name))
-    // ищем в уже загруженном списке — тогда избранное пересчитается, когда программы подгрузятся
-    readonly property var favorites: (Store.data.favorites || []).map(id => allApps.find(e => e.id === id)).filter(e => e)
-    function isFav(e) { return (Store.data.favorites || []).includes(e.id); }
-    function toggleFav(e) {
-        const f = (Store.data.favorites || []).slice();
-        const i = f.indexOf(e.id);
-        if (i >= 0) f.splice(i, 1); else if (f.length < 6) f.push(e.id);
-        Store.data.favorites = f;
-    }
+    function app(id) { return allApps.find(e => e.id === id) || DesktopEntries.heuristicLookup(id) || null; }
     readonly property var apps: {
         const raw = search.text.trim();
         if (raw.startsWith("?") && raw.length > 1) {
@@ -82,9 +68,8 @@ PanelWindow {
         }
         const q = raw.toLowerCase();
         if (!q) return allApps;
-        return allApps.filter(e =>
-            [e.name, e.genericName, e.comment, (e.keywords || []).join(" ")]
-                .some(s => (s || "").toLowerCase().includes(q)));
+        return allApps.filter(e => [e.name, e.genericName, e.comment, (e.keywords || []).join(" ")]
+            .some(s => (s || "").toLowerCase().includes(q)));
     }
     function launch(entry) {
         if (!entry) return;
@@ -93,295 +78,298 @@ PanelWindow {
         menuWin.closeRequested();
     }
 
-    MouseArea { id: catcher; anchors.fill: parent; enabled: menuWin.shown; onClicked: menuWin.closeRequested() }
-
-    // свеча из пикселей: воск, фитиль, живое пламя
-    component Candle: Item {
-        property int phase: 0
-        width: 12; height: 44
-        Image { source: Theme.asset("wallpapers/anim/flame-" + ((menuWin.tick + parent.phase) % 4) + ".png"); smooth: false }
-        Rectangle { x: 4; y: 12; width: 4; height: 2; color: Theme.dim }
-        Rectangle { x: 0; y: 14; width: 12; height: 30; color: Theme.text }
-        Rectangle { x: 0; y: 14; width: 4; height: 30; color: Theme.dim }
-        Rectangle { x: 8; y: 18; width: 2; height: 6; color: "#f0f0f0" }          // потёк воска
+    // ── пункты страниц ──
+    readonly property var mainItems: [
+        { label: Story.label("start", "ПРИЗВАТЬ").toUpperCase(), hint: "все программы и поиск", act: () => { menuWin.page = "apps"; menuWin.sel = 0; search.forceActiveFocus(); } },
+        { label: "ТЕРМИНАЛ", hint: "kitty", act: () => menuWin.launch(menuWin.app("kitty")) },
+        { label: "БРАУЗЕР", hint: "Helium", act: () => menuWin.launch(menuWin.app("helium")) },
+        { label: "ФАЙЛЫ", hint: "Nautilus", act: () => menuWin.launch(menuWin.app("org.gnome.Nautilus")) },
+        { label: "ИГРЫ", hint: "Steam", act: () => menuWin.launch(menuWin.app("steam")) },
+        { label: "НАСТРОЙКИ", hint: "BaphOS", act: () => menuWin.settingsRequested() },
+        { label: "ЗАМОК", hint: "заблокировать экран", act: () => { menuWin.closeRequested(); menuWin.lockRequested(); } },
+        { label: Story.label("logout", "ПОКИНУТЬ").toUpperCase(), hint: "выход, перезагрузка, выключение", act: () => { menuWin.page = "power"; menuWin.sel = 0; } },
+    ]
+    property int armed: -1
+    readonly property var powerItems: [
+        { label: "ВЫЙТИ", hint: "закончить сеанс", cmd: ["niri", "msg", "action", "quit", "--skip-confirmation"] },
+        { label: "ПЕРЕЗАГРУЗКА", hint: "заново", cmd: ["systemctl", "reboot"] },
+        { label: "ВЫКЛЮЧЕНИЕ", hint: "уснуть", cmd: ["systemctl", "poweroff"] },
+        { label: "НАЗАД", hint: "", cmd: null },
+    ]
+    readonly property var items: page === "power" ? powerItems : mainItems
+    function activate(i) {
+        if (page === "power") {
+            const it = powerItems[i];
+            if (!it.cmd) { page = "main"; sel = 7; armed = -1; return; }
+            if (armed === i) Quickshell.execDetached(it.cmd); else { armed = i; disarm.restart(); }
+            return;
+        }
+        mainItems[i].act();
     }
-    // заголовок с орнаментом: † ──── Текст ──── †
-    component Ornament: RowLayout {
-        property string label: ""
-        spacing: 8
-        PixelText { text: "†"; color: Theme.blood }
-        Rectangle { Layout.fillWidth: true; height: 2; color: Theme.dried }
-        PixelText { text: parent.label; color: Theme.scarlet }
-        Rectangle { Layout.fillWidth: true; height: 2; color: Theme.dried }
-        PixelText { text: "†"; color: Theme.blood }
-    }
+    Timer { id: disarm; interval: 3000; onTriggered: menuWin.armed = -1 }
 
+    // ── вид ──
     Item {
-        id: clipper
-        width: menuWin.panelW + 8
-        height: menuWin.reveal
-        clip: true
+        id: root
+        anchors.fill: parent
         visible: menuWin.shown
-        anchors { left: parent.left; bottom: parent.bottom; leftMargin: 4; bottomMargin: Theme.barHeight - 4 }
+        opacity: Math.min(1, menuWin.t * 3)
 
-        Rectangle { x: 8; y: clipper.height - menuWin.panelH + 8; width: menuWin.panelW; height: menuWin.panelH - 8; color: "#000000"; opacity: 0.6 }
+        MouseArea { anchors.fill: parent; onClicked: menuWin.closeRequested() }
+        Rectangle { anchors.fill: parent; color: "#000000"; opacity: 0.72 }
 
-        Bevel {
-            id: book
-            kind: "panel"
-            width: menuWin.panelW; height: menuWin.panelH - 8
-            y: clipper.height - menuWin.panelH
-            MouseArea { anchors.fill: parent }
+        // огромный бледный сигил
+        Image {
+            source: Theme.asset("sigil/sigil-128.png")
+            width: 768; height: 768; smooth: false
+            x: parent.width * 0.42; y: parent.height * 0.08
+            opacity: 0.06
+            rotation: -12
+        }
 
-            // страницы — тёмный пергамент
-            Image { anchors.fill: parent; source: Theme.asset("ui/page.png"); fillMode: Image.Tile; smooth: false }
+        // алая полоса наискось, влетает слева
+        Item {
+            id: band
+            width: parent.width * 1.4; height: 300
+            x: -parent.width * 0.2 - (1 - menuWin.t) * parent.width
+            y: parent.height * 0.5 - 150
+            rotation: -14
+            Rectangle { anchors.fill: parent; color: Theme.scarlet }
+            Image { anchors.fill: parent; source: Theme.asset("ui/halftone.png"); fillMode: Image.Tile; smooth: false; opacity: 0.8 }
+            Rectangle { anchors { left: parent.left; right: parent.right; top: parent.top } height: 10; color: Theme.bg }
+            Rectangle { anchors { left: parent.left; right: parent.right; bottom: parent.bottom } height: 18; color: Theme.bg }
+        }
 
-            RowLayout {
-                anchors.fill: parent
-                spacing: 0
+        // ── пункты лесенкой ──
+        Item {
+            id: column
+            x: 90; y: parent.height * 0.12
+            width: 760; height: parent.height * 0.8
+            visible: menuWin.page !== "apps"
 
-                // ══ левая страница ══
-                ColumnLayout {
-                    Layout.preferredWidth: 330
-                    Layout.fillHeight: true
-                    Layout.margins: 8
-                    spacing: 8
+            Repeater {
+                model: menuWin.items
+                Item {
+                    id: row
+                    required property var modelData
+                    required property int index
+                    readonly property bool cur: menuWin.sel === index
+                    readonly property real appear: Math.max(0, Math.min(1, menuWin.t * 2.2 - index * 0.12))
+                    width: 640; height: 64
+                    x: index * 28 - (1 - appear) * 240 + (cur ? 18 : 0)
+                    y: index * 74
+                    opacity: appear
+                    Behavior on x { NumberAnimation { duration: 90; easing.type: Easing.OutBack } }
 
-                    // свечи, сигил, имя
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 150
-                        Candle { x: 6; y: 20; phase: 0 }
-                        Candle { x: 28; y: 34; phase: 2 }
-                        Candle { anchors.right: parent.right; anchors.rightMargin: 28; y: 34; phase: 1 }
-                        Candle { anchors.right: parent.right; anchors.rightMargin: 6; y: 20; phase: 3 }
-                        Item {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            y: 0
-                            width: 96; height: 96
-                            Image { anchors.fill: parent; source: Theme.asset("sigil/sigil-32.png"); smooth: false }
-                        }
-                        Text {
-                            anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 92 }
-                            text: "BaphOS"; color: Theme.scarlet
-                            font.family: Theme.fontGothic; font.pixelSize: 48
-                            renderType: Text.NativeRendering
-                        }
-                    }
-                    PixelText {
-                        Layout.alignment: Qt.AlignHCenter
-                        text: (Quickshell.env("USER") ?? "") + " · " + Story.label("user", "служитель")
-                        color: Theme.dim
-                    }
-
-                    Ornament { Layout.fillWidth: true; label: "Избранное" }
-
-                    // избранное 3x2
-                    GridLayout {
-                        Layout.fillWidth: true
-                        columns: 3
-                        columnSpacing: 6; rowSpacing: 6
-                        Repeater {
-                            model: menuWin.favorites
-                            PixelButton {
-                                id: fav
-                                required property var modelData
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 78
-                                onClicked: m => { if (m.button === Qt.RightButton) menuWin.toggleFav(modelData); else menuWin.launch(modelData); }
-                                Column {
-                                    anchors.centerIn: parent
-                                    anchors.verticalCenterOffset: fav.down ? 1 : 0
-                                    spacing: 6
-                                    IconImage {
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        implicitSize: 32
-                                        source: Quickshell.iconPath(fav.modelData.icon, "application-x-executable")
-                                    }
-                                    PixelText {
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        width: 92
-                                        horizontalAlignment: Text.AlignHCenter
-                                        text: fav.modelData.name
-                                        color: fav.hovered ? Theme.scarlet : Theme.text
-                                        font.pixelSize: 12
-                                    }
-                                }
+                    // рваная клякса за выбранным
+                    Shape {
+                        visible: row.cur
+                        antialiasing: false
+                        x: -36; y: -22
+                        rotation: (menuWin.tick % 2 ? -2 : 1)
+                        ShapePath {
+                            fillColor: Theme.scarlet
+                            strokeColor: Theme.bg
+                            strokeWidth: 4
+                            PathPolyline {
+                                path: [Qt.point(0, 40), Qt.point(70, 0), Qt.point(120, 30), Qt.point(260, 6), Qt.point(330, 26),
+                                       Qt.point(520, 0), Qt.point(560, 34), Qt.point(700, 18), Qt.point(670, 60), Qt.point(720, 92),
+                                       Qt.point(560, 104), Qt.point(470, 92), Qt.point(300, 112), Qt.point(150, 96), Qt.point(40, 110),
+                                       Qt.point(60, 74), Qt.point(0, 40)]
                             }
                         }
                     }
-                    PixelText {
-                        Layout.alignment: Qt.AlignHCenter
-                        visible: menuWin.favorites.length === 0
-                        text: "Пусто. ПКМ по программе — в избранное."
-                        color: Theme.dim
-                        font.pixelSize: 12
-                    }
-
-                    Item { Layout.fillHeight: true }
-
-                    // питание и Настройки: подпись наведённой кнопки — над рядом
-                    PixelText {
-                        id: powerHint
-                        Layout.alignment: Qt.AlignHCenter
-                        text: " "
-                        color: Theme.scarlet
-                        font.pixelSize: 12
-                    }
-                    RowLayout {
-                        Layout.fillWidth: true
-                        spacing: 6
-                        Repeater {
-                            model: [
-                                { label: "Настройки", icon: "settings-cog", confirm: false, cmd: "settings" },
-                                { label: "Замок", icon: "lock", confirm: false, cmd: "lock" },
-                                { label: Story.label("logout", "Выход"), icon: "logout", confirm: true, cmd: ["niri", "msg", "action", "quit", "--skip-confirmation"] },
-                                { label: "Заново", icon: "reload", confirm: true, cmd: ["systemctl", "reboot"] },
-                                { label: "Уснуть", icon: "power", confirm: true, cmd: ["systemctl", "poweroff"] },
-                            ]
-                            PixelButton {
-                                id: pw
-                                required property var modelData
-                                property bool armed: false
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 40
-                                active: armed
-                                onHoveredChanged: powerHint.text = hovered ? (armed ? "Точно? Ещё раз." : modelData.label) : " "
-                                onClicked: {
-                                    if (modelData.cmd === "settings") { menuWin.settingsRequested(); return; }
-                                    if (modelData.cmd === "lock") { menuWin.closeRequested(); menuWin.lockRequested(); return; }
-                                    if (armed) Quickshell.execDetached(modelData.cmd);
-                                    else { armed = true; powerHint.text = "Точно? Ещё раз."; disarm.restart(); }
-                                }
-                                Timer { id: disarm; interval: 3000; onTriggered: pw.armed = false }
-                                Image {
-                                    anchors.centerIn: parent
-                                    anchors.verticalCenterOffset: pw.down ? 1 : 0
-                                    source: Theme.icon(pw.modelData.icon, pw.armed || pw.hovered ? "scarlet" : "bone")
-                                    width: 24; height: 24; smooth: false
-                                }
-                            }
+                    // косая лента
+                    Shape {
+                        antialiasing: false
+                        ShapePath {
+                            fillColor: row.cur ? Theme.text : Theme.bg
+                            strokeColor: row.cur ? Theme.bg : Theme.text
+                            strokeWidth: 3
+                            startX: 24; startY: 0
+                            PathLine { x: 640; y: 0 }
+                            PathLine { x: 616; y: 64 }
+                            PathLine { x: 0; y: 64 }
+                            PathLine { x: 24; y: 0 }
                         }
                     }
-                }
-
-                // ══ корешок ══
-                Image {
-                    Layout.preferredWidth: 24
-                    Layout.fillHeight: true
-                    source: Theme.asset("ui/spine.png")
-                    fillMode: Image.TileVertically
-                    smooth: false
-                }
-
-                // ══ правая страница ══
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    Layout.margins: 8
-                    spacing: 8
-
-                    Ornament { Layout.fillWidth: true; label: Story.label("start", "Призыв") }
-
-                    Bevel {
-                        kind: "well"
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 34
-                        Image { id: lens; source: Theme.icon("search", search.activeFocus ? "scarlet" : "dim"); width: 24; height: 24; smooth: false; anchors { left: parent.left; leftMargin: 2; verticalCenter: parent.verticalCenter } }
-                        TextInput {
-                            id: search
-                            anchors { left: lens.right; right: parent.right; top: parent.top; bottom: parent.bottom; leftMargin: 6; rightMargin: 6 }
-                            verticalAlignment: TextInput.AlignVCenter
-                            color: Theme.scarlet
-                            selectionColor: Theme.blood
-                            font.family: Theme.font
-                            font.pixelSize: Theme.fontPx
-                            renderType: Text.NativeRendering
-                            cursorDelegate: Rectangle { width: 8; color: Theme.scarlet; visible: search.activeFocus && (menuWin.tick % 4 < 2) }
-                            onTextChanged: list.currentIndex = 0
-                            Keys.onEscapePressed: menuWin.closeRequested()
-                            Keys.onDownPressed: list.incrementCurrentIndex()
-                            Keys.onUpPressed: list.decrementCurrentIndex()
-                            Keys.onReturnPressed: menuWin.launch(menuWin.apps[list.currentIndex])
-                            Keys.onEnterPressed: menuWin.launch(menuWin.apps[list.currentIndex])
-                            PixelText { visible: !search.text; text: Story.label("search", "Призвать..."); color: Theme.dim; anchors.verticalCenter: parent.verticalCenter }
-                        }
+                    Text {
+                        x: 44; anchors.verticalCenter: parent.verticalCenter
+                        text: row.modelData.label
+                        color: row.cur ? Theme.bg : (menuWin.page === "power" && menuWin.armed === row.index ? Theme.scarlet : Theme.text)
+                        font.family: Theme.font; font.pixelSize: 32; font.bold: true
+                        renderType: Text.NativeRendering
                     }
-
-                    ListView {
-                        id: list
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        clip: true
-                        model: menuWin.apps
-                        boundsBehavior: Flickable.StopAtBounds
-                        highlightMoveDuration: 0
-                        delegate: Item {
-                            id: row
-                            required property var modelData
-                            required property int index
-                            readonly property bool cur: ListView.isCurrentItem
-                            readonly property bool appeared: !Store.data.animations || menuWin.tick >= Math.min(row.index, 14) / 4
-                            width: list.width; height: 30
-                            opacity: appeared ? 1 : 0
-
-                            Rectangle {
-                                anchors.fill: parent
-                                visible: row.cur
-                                color: Theme.dried
-                                Image { anchors.fill: parent; source: Theme.asset("ui/checker.png"); fillMode: Image.Tile; smooth: false }
-                                Rectangle { anchors { left: parent.left; top: parent.top; bottom: parent.bottom } width: 2; color: Theme.scarlet }
-                            }
-                            PixelText { x: 6; anchors.verticalCenter: parent.verticalCenter; visible: row.cur; text: "†"; color: Theme.scarlet; font.bold: true }
-                            Row {
-                                x: row.cur ? 22 : 8
-                                anchors.verticalCenter: parent.verticalCenter
-                                spacing: 8
-                                IconImage {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    implicitSize: 16
-                                    source: Quickshell.iconPath(row.modelData.icon, "application-x-executable")
-                                }
-                                PixelText {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    width: list.width - 80
-                                    text: row.modelData.name
-                                    color: row.cur ? Theme.scarlet : Theme.text
-                                }
-                            }
-                            // отметка избранного
-                            Rectangle {
-                                anchors { right: parent.right; rightMargin: 30; verticalCenter: parent.verticalCenter }
-                                visible: row.modelData.id !== undefined && menuWin.isFav(row.modelData)
-                                width: 6; height: 6; rotation: 45; color: Theme.blood
-                            }
-                            Image {
-                                visible: row.cur
-                                anchors { right: parent.right; rightMargin: 8; verticalCenter: parent.verticalCenter }
-                                source: Theme.asset("wallpapers/anim/flame-" + (menuWin.tick % 4) + ".png")
-                                smooth: false
-                            }
-                            MouseArea {
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                onEntered: list.currentIndex = row.index
-                                onClicked: m => {
-                                    if (m.button === Qt.RightButton) { if (row.modelData.id !== undefined) menuWin.toggleFav(row.modelData); }
-                                    else menuWin.launch(row.modelData);
-                                }
-                            }
-                        }
-                        PixelText { anchors.centerIn: parent; visible: list.count === 0; text: "Пустота. Ничего не найдено."; color: Theme.dim }
+                    Text {
+                        anchors { right: parent.right; rightMargin: 42; verticalCenter: parent.verticalCenter }
+                        text: menuWin.page === "power" && menuWin.armed === row.index ? "ТОЧНО? ЕЩЁ РАЗ" : row.modelData.hint
+                        color: row.cur ? Theme.blood : Theme.dim
+                        font.family: Theme.font; font.pixelSize: 16
+                        renderType: Text.NativeRendering
                     }
-                    PixelText {
-                        Layout.alignment: Qt.AlignHCenter
-                        text: "ПКМ — избранное · ?сеть · >команда"
-                        color: Theme.dim
-                        font.pixelSize: 12
+                    // указатель
+                    Text {
+                        visible: row.cur
+                        x: -30; anchors.verticalCenter: parent.verticalCenter
+                        text: "▶"; color: Theme.bg
+                        font.family: Theme.font; font.pixelSize: 24
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: menuWin.sel = row.index
+                        onClicked: menuWin.activate(row.index)
                     }
                 }
             }
+        }
+
+        // ── карточка статуса справа ──
+        Item {
+            id: card
+            readonly property real appear: Math.max(0, Math.min(1, menuWin.t * 1.6 - 0.3))
+            width: 420; height: 300
+            x: parent.width - width - 80 + (1 - appear) * 300
+            y: parent.height * 0.14
+            opacity: appear
+            rotation: 4
+            visible: menuWin.page !== "apps"
+            Shape {
+                antialiasing: false
+                ShapePath {
+                    fillColor: Theme.text
+                    strokeColor: Theme.bg
+                    strokeWidth: 4
+                    startX: 30; startY: 0
+                    PathLine { x: 420; y: 14 }
+                    PathLine { x: 396; y: 300 }
+                    PathLine { x: 0; y: 284 }
+                    PathLine { x: 30; y: 0 }
+                }
+            }
+            Column {
+                x: 44; y: 26
+                spacing: 6
+                Text { id: bigClock; color: Theme.bg; font.family: Theme.font; font.pixelSize: 48; font.bold: true; renderType: Text.NativeRendering }
+                Text { id: bigDate; color: Theme.blood; font.family: Theme.font; font.pixelSize: 24; renderType: Text.NativeRendering }
+                Rectangle { width: 320; height: 4; color: Theme.scarlet }
+                Text { text: (Quickshell.env("USER") ?? "").toUpperCase() + " · " + Story.label("user", "служитель"); color: Theme.bg; font.family: Theme.font; font.pixelSize: 16; renderType: Text.NativeRendering }
+                Text { text: Store.data.story && Store.data.effects ? "ЭТАП ЗАРАЖЕНИЯ " + Store.data.storyStage : "СЮЖЕТ СПИТ"; color: Theme.crimson; font.family: Theme.font; font.pixelSize: 16; renderType: Text.NativeRendering }
+                Text { text: "BaphOS"; color: Theme.scarlet; font.family: Theme.fontGothic; font.pixelSize: 48; renderType: Text.NativeRendering }
+            }
+            Timer {
+                interval: 1000; repeat: true; running: menuWin.shown; triggeredOnStart: true
+                onTriggered: { const d = new Date(); bigClock.text = Qt.formatDateTime(d, "HH:mm"); bigDate.text = Qt.locale("ru_RU").toString(d, "dddd, d MMMM").toUpperCase(); }
+            }
+        }
+
+        // ── ПРИЗВАТЬ: поиск и все программы ──
+        Item {
+            id: appsPage
+            visible: menuWin.page === "apps"
+            x: 90; y: parent.height * 0.1
+            width: Math.min(900, parent.width - 180); height: parent.height * 0.78
+
+            Shape {
+                antialiasing: false
+                ShapePath {
+                    fillColor: Theme.text; strokeColor: Theme.bg; strokeWidth: 3
+                    startX: 20; startY: 0
+                    PathLine { x: 620; y: 0 }
+                    PathLine { x: 600; y: 56 }
+                    PathLine { x: 0; y: 56 }
+                    PathLine { x: 20; y: 0 }
+                }
+            }
+            TextInput {
+                id: search
+                x: 40; y: 0; width: 540; height: 56
+                verticalAlignment: TextInput.AlignVCenter
+                color: Theme.bg
+                font.family: Theme.font; font.pixelSize: 24; font.bold: true
+                renderType: Text.NativeRendering
+                onTextChanged: { list.currentIndex = 0; if (text && menuWin.page !== "apps") menuWin.page = "apps"; }
+                Keys.onEscapePressed: { if (text) text = ""; else { menuWin.page = "main"; keys.forceActiveFocus(); } }
+                Keys.onDownPressed: list.incrementCurrentIndex()
+                Keys.onUpPressed: list.decrementCurrentIndex()
+                Keys.onReturnPressed: menuWin.launch(menuWin.apps[list.currentIndex])
+                Keys.onEnterPressed: menuWin.launch(menuWin.apps[list.currentIndex])
+                Text { visible: !search.text; text: "ЧТО ПРИЗВАТЬ?   ?сеть   >команда"; color: Theme.dim; font.family: Theme.font; font.pixelSize: 24; anchors.verticalCenter: parent.verticalCenter }
+            }
+            ListView {
+                id: list
+                y: 80; width: parent.width; height: parent.height - 80
+                clip: true
+                model: menuWin.apps
+                spacing: 6
+                boundsBehavior: Flickable.StopAtBounds
+                highlightMoveDuration: 0
+                delegate: Item {
+                    id: arow
+                    required property var modelData
+                    required property int index
+                    readonly property bool cur: ListView.isCurrentItem
+                    width: 620; height: 40
+                    x: (index % 2) * 14 + (cur ? 16 : 0)
+                    Behavior on x { NumberAnimation { duration: 80 } }
+                    Shape {
+                        antialiasing: false
+                        ShapePath {
+                            fillColor: arow.cur ? Theme.scarlet : Theme.bg
+                            strokeColor: arow.cur ? Theme.bg : Theme.text
+                            strokeWidth: 2
+                            startX: 14; startY: 0
+                            PathLine { x: 620; y: 0 }
+                            PathLine { x: 606; y: 40 }
+                            PathLine { x: 0; y: 40 }
+                            PathLine { x: 14; y: 0 }
+                        }
+                    }
+                    Row {
+                        x: 30; anchors.verticalCenter: parent.verticalCenter
+                        spacing: 12
+                        IconImage { anchors.verticalCenter: parent.verticalCenter; implicitSize: 24; source: Quickshell.iconPath(arow.modelData.icon, "application-x-executable") }
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: arow.modelData.name.toUpperCase()
+                            color: arow.cur ? Theme.bg : Theme.text
+                            font.family: Theme.font; font.pixelSize: 16; font.bold: true
+                            renderType: Text.NativeRendering
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: list.currentIndex = arow.index
+                        onClicked: menuWin.launch(arow.modelData)
+                    }
+                }
+            }
+        }
+
+        // подсказка снизу
+        Text {
+            anchors { left: parent.left; bottom: parent.bottom; leftMargin: 90; bottomMargin: Theme.barHeight + 20 }
+            text: menuWin.page === "apps" ? "↑↓ выбрать · ENTER призвать · ESC назад" : "↑↓ выбрать · ENTER · ESC закрыть · печатай — поиск"
+            color: Theme.dim
+            font.family: Theme.font; font.pixelSize: 16
+            renderType: Text.NativeRendering
+            opacity: menuWin.t
+        }
+    }
+
+    // клавиатура на главной и в «Покинуть»
+    Item {
+        id: keys
+        focus: menuWin.open && menuWin.page !== "apps"
+        Keys.onPressed: e => {
+            if (e.key === Qt.Key_Escape) { if (menuWin.page === "power") { menuWin.page = "main"; menuWin.sel = 7; } else menuWin.closeRequested(); }
+            else if (e.key === Qt.Key_Down) menuWin.sel = (menuWin.sel + 1) % menuWin.items.length;
+            else if (e.key === Qt.Key_Up) menuWin.sel = (menuWin.sel - 1 + menuWin.items.length) % menuWin.items.length;
+            else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter) menuWin.activate(menuWin.sel);
+            else if (e.text && e.text.trim() && menuWin.page === "main") { menuWin.page = "apps"; search.text = e.text; search.forceActiveFocus(); }
+            else return;
+            e.accepted = true;
         }
     }
 }
