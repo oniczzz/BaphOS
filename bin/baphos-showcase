@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 # BaphOS: 30-секундный ролик-витрина. Пишет экран (gpu-screen-recorder, со звуком системы — музыку
-# включи сам перед запуском) и сам проводит по фичам: Пуск, kitty + ff, Алтарь, мозаика обоев,
-# сюжет, свиток клавиш, скриншот, сгорание окна. Во время записи ПК не трогать.
+# включи сам перед запуском) и сам проводит по фичам: Пуск, kitty + ff, RPG-диалог, карта подвала,
+# мозаика обоев, глитч, Алтарь, баннер, скриншот, порталы. Во время записи ПК не трогать.
 #   baphos-showcase [экран] [файл]      по умолчанию экран с фокусом и ~/Videos/BaphOS-showcase.mp4
 set -euo pipefail
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-1}"
+export DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-unix:path=$XDG_RUNTIME_DIR/bus}"
 export NIRI_SOCKET="${NIRI_SOCKET:-$(ls "$XDG_RUNTIME_DIR"/niri.*.sock | head -1)}"
 
 OUT_SCREEN="${1:-$(niri msg -j workspaces | python3 -c 'import json,sys; print(next(w["output"] for w in json.load(sys.stdin) if w["is_focused"]))')}"
+REPO="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/.." && pwd)"
 FILE="${2:-$HOME/Videos/BaphOS-showcase.mp4}"
 mkdir -p -- "$(dirname -- "$FILE")"
 
@@ -35,20 +37,22 @@ at 2.6;  wtype -k Down
 at 3.0;  wtype -k Down
 at 3.4;  wtype -k Up
 at 3.8;  wtype -d 60 kitty                   # печать сразу открывает «Призвать» с поиском
-at 4.9;  wtype -k Return
-at 6.2;  wtype -d 90 ff; wtype -k Return
-at 9.2;  q altar toggle
-at 11.8; q altar toggle
-at 12.6; q wallpaper set ritual
-at 15.0; q story whisper
-at 15.4; q story glitch 2; q story lamb
-at 18.0; q keys toggle
-at 20.0; q keys toggle
-at 20.5; q shot region
-at 23.0; q shot cancel
-at 23.4; q wallpaper set cathedral
-at 25.2; q story glitch 3
-at 26.4; niri msg action close-window        # kitty сгорает
+at 4.9;  wtype -k Return                     # kitty выходит из портала
+at 6.4;  wtype -d 90 ff; wtype -k Return
+at 8.6;  notify-send -a BaphOS -i "$REPO/assets/sigil/sigil-64.png" "Новое знамение" "Культ заметил тебя. Свечи горят ярче, двери подвала открыты."
+at 12.4; q map toggle                        # карта подвала
+at 13.4; wtype -k Tab
+at 14.1; wtype -k Tab
+at 15.0; q map toggle
+at 15.6; q wallpaper set ritual              # мозаика обоев
+at 17.2; q story glitch 2
+at 18.2; q altar toggle
+at 20.2; q altar toggle
+at 20.8; q banner say "ДУША СОХРАНЕНА"
+at 23.8; q wallpaper set cathedral
+at 25.0; q shot region
+at 26.6; q shot cancel
+at 27.2; niri msg action close-window        # kitty уходит в тёмный портал
 at 30.0
 kill -INT "$REC"; wait "$REC" 2>/dev/null || true
 q wallpaper set crimson-moon
