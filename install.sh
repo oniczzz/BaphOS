@@ -55,6 +55,7 @@ mkdir -p -- "$H/.local/state/baphos"          # настройки оболоч�
 link quickshell/baphos       "$H/.config/quickshell/baphos"
 link bin/niri-window-switch   "$H/.local/bin/niri-window-switch"   # Mod+Tab: список окон
 link bin/baphos-shot          "$H/.local/bin/baphos-shot"          # Mod+Shift+S: вырезать, сохранить, скопировать
+link bin/baphos-save-monitors "$H/.local/bin/baphos-save-monitors" # Настройки → Экран → Сохранить
 link kitty                   "$H/.config/kitty"                  # терминал по умолчанию
 # терминал по умолчанию для xdg-terminal-exec (Nautilus «Открыть в терминале» и т.п.)
 printf 'kitty.desktop\n' >"$H/.config/xdg-terminals.list"
@@ -115,6 +116,27 @@ include "monitor.kdl"
 EOF
   say "$NIRI: подключён BaphOS"
 fi
+# клавиатура, тачпад и мышь: ~/.config/niri/input.kdl — пишут Настройки BaphOS; по умолчанию как раньше
+INPUT="$H/.config/niri/input.kdl"
+if [[ ! -e "$INPUT" ]]; then
+  cat >"$INPUT" <<'KDL'
+// BaphOS: клавиатура, тачпад, мышь. Этот файл пишут Настройки BaphOS (раздел «Клавиатура и мышь»).
+input {
+    keyboard {
+        xkb {
+            layout "us,ru"
+            options "grp:alt_shift_toggle"
+        }
+    }
+    touchpad {
+        tap
+        natural-scroll
+    }
+}
+KDL
+fi
+grep -qxF 'include "input.kdl"' "$NIRI" || printf 'include "input.kdl"\n' >>"$NIRI"
+
 niri validate -c "$NIRI" >/dev/null 2>&1 && say "niri validate: ok" || { say "niri validate: ОШИБКА"; niri validate -c "$NIRI"; exit 1; }
 
 if command -v gsettings >/dev/null 2>&1; then

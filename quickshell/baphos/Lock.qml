@@ -53,7 +53,8 @@ Scope {
 
     // автоблокировка после 10 минут простоя
     IdleMonitor {
-        timeout: 600
+        timeout: Math.max(1, Store.data.lockMinutes) * 60
+        enabled: Store.data.lockMinutes > 0
         respectInhibitors: true
         onIsIdleChanged: if (isIdle) root.lock()
     }
