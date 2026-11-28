@@ -53,6 +53,7 @@ Singleton {
             property real mouseSpeed: 0.0
             property bool mouseFlat: false
             property int lockMinutes: 10        // автоблокировка; 0 — никогда
+            property bool roomSigns: true       // табличка комнаты при смене стола
             property bool banners: true         // баннеры на весь экран (замок, выход)
             property bool effects: true         // false = «Спокойный режим»: без сюжета, глитчей, углей, живых обоев и эффектов окон
             property bool autoGameMode: true    // включать его самому, когда окно во весь экран

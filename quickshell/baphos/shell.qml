@@ -93,6 +93,14 @@ ShellRoot {
 
     Variants {
         model: Quickshell.screens
+        PortalFx {}
+    }
+    Variants {
+        model: Quickshell.screens
+        WorkspaceSign {}
+    }
+    Variants {
+        model: Quickshell.screens
         DungeonMap {
             open: root.mapOpen && root.mapOutput === modelData.name
             onCloseRequested: { root.mapOpen = false; Sfx.play("close"); }

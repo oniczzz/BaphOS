@@ -11,6 +11,15 @@ Singleton {
     property var workspaces: []       // как в `niri msg --json workspaces`
     property var windows: []          // как в `niri msg --json windows`
     property var minimized: []        // id окон, «свёрнутых» с панели задач (лежат на последнем столе)
+    // окно перешло на другой монитор: откуда/куда (выход и центр окна в координатах экрана)
+    signal portalJump(string fromOutput, point fromCenter, string toOutput, point toCenter)
+    // на мониторе переключился стол
+    signal workspaceSwitched(string output, int idx)
+    function centerOf(win) {
+        const l = win?.layout;
+        if (!l || !l.tile_pos_in_workspace_view) return Qt.point(-1, -1);
+        return Qt.point(l.tile_pos_in_workspace_view[0] + l.tile_size[0] / 2, l.tile_pos_in_workspace_view[1] + l.tile_size[1] / 2);
+    }
     readonly property string focusedOutput: (workspaces.find(w => w.is_focused) || {}).output || ""
     readonly property string layoutShort: {
         const n = layouts[layoutIdx] || "";
@@ -69,7 +78,10 @@ Singleton {
                 } else if (ev.WorkspaceActivated) {
                     // активен на своём мониторе; если focused — ещё и фокус
                     const id = ev.WorkspaceActivated.id, focused = ev.WorkspaceActivated.focused;
-                    const out = (root.workspaces.find(w => w.id === id) || {}).output;
+                    const ws = root.workspaces.find(w => w.id === id) || {};
+                    const out = ws.output;
+                    const was = root.workspaces.find(w => w.output === out && w.is_active);
+                    if (out && was && was.id !== id) root.workspaceSwitched(out, ws.idx);
                     root.workspaces = root.workspaces.map(w => Object.assign({}, w, {
                         is_active: w.output === out ? w.id === id : w.is_active,
                         is_focused: focused ? w.id === id : w.is_focused,
@@ -82,6 +94,12 @@ Singleton {
                     root.windows = ev.WindowsChanged.windows;
                 } else if (ev.WindowOpenedOrChanged) {
                     const w = ev.WindowOpenedOrChanged.window;
+                    const old = root.windows.find(x => x.id === w.id);
+                    if (old && old.workspace_id !== w.workspace_id) {
+                        const a = (root.workspaces.find(x => x.id === old.workspace_id) || {}).output;
+                        const b = (root.workspaces.find(x => x.id === w.workspace_id) || {}).output;
+                        if (a && b && a !== b) root.portalJump(a, root.centerOf(old), b, root.centerOf(w));
+                    }
                     root.windows = root.windows.some(x => x.id === w.id) ? root.windows.map(x => x.id === w.id ? w : x) : root.windows.concat([w]);
                 } else if (ev.WindowClosed) {
                     root.windows = root.windows.filter(x => x.id !== ev.WindowClosed.id);

@@ -1,48 +1,54 @@
 // BaphOS: эффекты окон ВКЛ (подключается через niri/fx.kdl — его переключает «Спокойный режим»)
+// Порталы: окно выходит из раскрывающегося алого овала и уходит в схлопывающийся тёмный.
+// Всё считается по пиксельной сетке 4x4 — края овала ступенчатые, как в пиксель-арте.
 animations {
-    // Окно проступает пиксельными блоками 8x8 в случайном порядке, у ещё не проявившихся — алая кайма
     window-open {
-        duration-ms 280
-        curve "linear"
+        duration-ms 340
+        curve "ease-out-cubic"
         custom-shader r"
-            float baph_hash(vec2 p) {
-                return fract(sin(dot(p, vec2(127.1, 311.7)) + niri_random_seed * 43758.5) * 43758.5453);
-            }
             vec4 open_color(vec3 coords_geo, vec3 size_geo) {
                 if (coords_geo.x < 0.0 || coords_geo.x > 1.0 || coords_geo.y < 0.0 || coords_geo.y > 1.0)
                     return vec4(0.0);
+                // пиксельная сетка
+                vec2 px = floor(coords_geo.xy * size_geo.xy / 4.0) * 4.0 + 2.0;
+                vec2 q = px / size_geo.xy;
+                // овал: по ширине уже, чем по высоте — как портал
+                vec2 d = (q - 0.5) / vec2(0.5, 0.62);
+                float r = length(d);
+                float p = niri_clamped_progress;
+                float rad = p * 1.45;
+                float ring = 0.07 * (1.0 - p) + 0.015;
+                if (r > rad) return vec4(0.0);
                 vec3 coords_tex = niri_geo_to_tex * coords_geo;
                 vec4 color = texture2D(niri_tex, coords_tex.st);
-                vec2 cell = floor(coords_geo.xy * size_geo.xy / 8.0);
-                float h = baph_hash(cell);
-                float p = niri_clamped_progress * 1.15;
-                if (h > p) return vec4(0.0);
-                if (h > p - 0.12) return vec4(1.0, 0.1, 0.1, 1.0);
+                if (r > rad - ring * 0.45) return vec4(1.0, 0.85, 0.55, 1.0);   // раскалённая кромка
+                if (r > rad - ring) return vec4(1.0, 0.1, 0.1, 1.0);             // алое кольцо
+                if (r > rad - ring * 2.2) return vec4(color.rgb * 0.35 + vec3(0.42, 0.0, 0.0) * 0.65, 1.0);
                 return color;
             }
         "
     }
-    // Окно сгорает снизу вверх: рваная кромка от раскалённой к алой и тёмно-красной, сгоревшее исчезает
     window-close {
-        duration-ms 320
-        curve "linear"
+        duration-ms 300
+        curve "ease-out-quad"
         custom-shader r"
-            float baph_hash(vec2 p) {
-                return fract(sin(dot(p, vec2(269.5, 183.3)) + niri_random_seed * 9137.1) * 43758.5453);
-            }
             vec4 close_color(vec3 coords_geo, vec3 size_geo) {
                 if (coords_geo.x < 0.0 || coords_geo.x > 1.0 || coords_geo.y < 0.0 || coords_geo.y > 1.0)
                     return vec4(0.0);
+                vec2 px = floor(coords_geo.xy * size_geo.xy / 4.0) * 4.0 + 2.0;
+                vec2 q = px / size_geo.xy;
+                vec2 d = (q - 0.5) / vec2(0.5, 0.62);
+                float r = length(d);
+                float p = niri_clamped_progress;
+                float rad = (1.0 - p) * 1.45;
+                float ring = 0.06 * p + 0.02;
+                if (r > rad) return vec4(0.0);
                 vec3 coords_tex = niri_geo_to_tex * coords_geo;
                 vec4 color = texture2D(niri_tex, coords_tex.st);
-                vec2 cell = floor(coords_geo.xy * size_geo.xy / 6.0);
-                float burn = (1.0 - coords_geo.y) * 0.75 + baph_hash(cell) * 0.25;
-                float p = niri_clamped_progress * 1.25;
-                if (burn < p - 0.10) return vec4(0.0);
-                if (burn < p - 0.06) return vec4(0.42, 0.0, 0.0, 1.0);
-                if (burn < p - 0.03) return vec4(1.0, 0.1, 0.1, 1.0);
-                if (burn < p) return vec4(1.0, 0.85, 0.55, 1.0);
-                return color;
+                if (r > rad - ring * 0.5) return vec4(0.23, 0.0, 0.0, 1.0);      // тёмная кромка
+                if (r > rad - ring) return vec4(0.42, 0.0, 0.0, 1.0);            // тёмно-алое кольцо
+                // окно темнеет, затягиваясь внутрь
+                return vec4(color.rgb * (1.0 - p * 0.8), color.a);
             }
         "
     }
