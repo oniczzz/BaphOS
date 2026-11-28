@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# BaphOS: 30-секундный ролик-витрина. Пишет экран (gpu-screen-recorder, со звуком системы — музыку
+# включи сам перед запуском) и сам проводит по фичам: Пуск, kitty + ff, Алтарь, мозаика обоев,
+# сюжет, свиток клавиш, скриншот, сгорание окна. Во время записи ПК не трогать.
+#   baphos-showcase [экран] [файл]      по умолчанию экран с фокусом и ~/Videos/BaphOS-showcase.mp4
+set -euo pipefail
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-1}"
+export NIRI_SOCKET="${NIRI_SOCKET:-$(ls "$XDG_RUNTIME_DIR"/niri.*.sock | head -1)}"
+
+OUT_SCREEN="${1:-$(niri msg -j workspaces | python3 -c 'import json,sys; print(next(w["output"] for w in json.load(sys.stdin) if w["is_focused"]))')}"
+FILE="${2:-$HOME/Videos/BaphOS-showcase.mp4}"
+mkdir -p -- "$(dirname -- "$FILE")"
+
+q()  { qs -c baphos ipc call "$@" >/dev/null 2>&1 || true; }
+at() { # at <секунда от старта>: ждать до этого момента
+  local left; left=$(awk -v s="$START" -v t="$1" -v n="$(date +%s.%N)" 'BEGIN { d = s + t - n; print (d > 0 ? d : 0) }')
+  sleep "$left"
+}
+
+# подготовка: пустой стол на нужном экране, нужные обои, всё закрыто
+niri msg action focus-monitor "$OUT_SCREEN"
+niri msg action focus-workspace 99           # последний — всегда пустой
+q start close; q altar toggle >/dev/null; q altar toggle; q keys toggle; q keys toggle; q shot cancel
+q wallpaper set crimson-moon
+sleep 2.5
+
+gpu-screen-recorder -w "$OUT_SCREEN" -f 30 -a default_output -c mp4 -o "$FILE" >/dev/null 2>&1 &
+REC=$!
+sleep 1.2                                    # запись прогрелась
+START=$(date +%s.%N)
+
+at 1.6;  q start toggle                      # Пуск в духе Persona: полоса влетает
+at 2.6;  wtype -k Down
+at 3.0;  wtype -k Down
+at 3.4;  wtype -k Up
+at 3.8;  wtype -d 60 kitty                   # печать сразу открывает «Призвать» с поиском
+at 4.9;  wtype -k Return
+at 6.2;  wtype -d 90 ff; wtype -k Return
+at 9.2;  q altar toggle
+at 11.8; q altar toggle
+at 12.6; q wallpaper set ritual
+at 15.0; q story whisper
+at 15.4; q story glitch 2; q story lamb
+at 18.0; q keys toggle
+at 20.0; q keys toggle
+at 20.5; q shot region
+at 23.0; q shot cancel
+at 23.4; q wallpaper set cathedral
+at 25.2; q story glitch 3
+at 26.4; niri msg action close-window        # kitty сгорает
+at 30.0
+kill -INT "$REC"; wait "$REC" 2>/dev/null || true
+q wallpaper set crimson-moon
+echo "$FILE"
