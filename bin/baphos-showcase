@@ -29,6 +29,7 @@ sleep 2.5
 
 gpu-screen-recorder -w "$OUT_SCREEN" -f 30 -a default_output -c mp4 -o "$FILE" >/dev/null 2>&1 &
 REC=$!
+trap 'kill -INT "$REC" 2>/dev/null || true' EXIT   # упал скрипт — запись всё равно остановится
 sleep 1.2                                    # запись прогрелась
 START=$(date +%s.%N)
 
