@@ -126,6 +126,12 @@ FloatingWindow {
                     onToggled: v => Store.data.animations = v
                 }
                 PixelSwitch {
+                    text: "Спокойный режим"
+                    hint: "выключить сюжет, глитчи, угли, живые обои и эффекты окон — если что-то кажется багом"
+                    checked: Mode.calm
+                    onToggled: v => Store.data.effects = !v
+                }
+                PixelSwitch {
                     text: "Игровой режим сам, когда окно во весь экран"
                     hint: "игры и видео без глитчей, звуков и всплывающих уведомлений"
                     checked: Store.data.autoGameMode

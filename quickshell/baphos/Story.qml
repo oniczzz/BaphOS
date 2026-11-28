@@ -11,7 +11,7 @@ import Quickshell
 Singleton {
     id: root
     // в игровом режиме и при окне во весь экран сюжет молчит (Mode.quiet)
-    readonly property bool on: Store.data.story && !Mode.quiet
+    readonly property bool on: Store.data.story && !Mode.quiet && !Mode.calm
     readonly property int stage: on ? Store.data.storyStage : 0
 
     // события для StoryOverlay / окон

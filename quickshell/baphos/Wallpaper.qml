@@ -28,7 +28,7 @@ PanelWindow {
         target: Store.data
         function onWallpaperChanged() {
             if (Store.data.wallpaper === wall.shown) return;
-            if (!Store.data.animations) { wall.shown = Store.data.wallpaper; return; }
+            if (!Store.data.animations || Mode.calm) { wall.shown = Store.data.wallpaper; return; }
             mosaic.start();
         }
     }
@@ -45,7 +45,7 @@ PanelWindow {
     WallpaperAnim {
         anchors.fill: parent
         jsonPath: wall.shown ? Theme.asset(wall.base + ".json") : ""
-        running: Store.data.animations && !mosaic.active && !Mode.quiet
+        running: Store.data.animations && !mosaic.active && !Mode.quiet && !Mode.calm
     }
 
     // ── сюжет: с этапа «Знак» на обоях проступает сигил (ступенчатое дыхание) ──

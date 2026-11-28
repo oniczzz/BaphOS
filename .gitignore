@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 /build/
 icon-theme.cache
+niri/fx.kdl

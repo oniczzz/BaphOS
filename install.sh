@@ -97,6 +97,9 @@ QTCONF
   say "$QT: палитра BaphOS"
 fi
 
+# эффекты окон niri: ссылка fx.kdl (её переключает «Спокойный режим»); по умолчанию — вкл
+[[ -e "$REPO/niri/fx.kdl" ]] || ln -s fx-on.kdl "$REPO/niri/fx.kdl"
+
 # niri: свой config.kdl с include BaphOS; мониторы остаются в monitor.kdl
 NIRI="$H/.config/niri/config.kdl"
 WANT="include \"$REPO/niri/baphos.kdl\""

@@ -17,7 +17,7 @@ PanelWindow {
 
     property bool shown: false
     property int reveal: 0
-    readonly property int panelH: Math.min(740, cc.height - Theme.barHeight - 8)
+    readonly property int panelH: Math.min(800, cc.height - Theme.barHeight - 8)
 
     visible: true
     mask: Region { item: cc.shown ? catcher : nothing }
@@ -201,6 +201,15 @@ PanelWindow {
                     sub: Store.data.gameMode ? "тишина: без глитчей, звуков и всплывашек"
                        : Mode.quiet ? "сейчас сам: окно во весь экран" : "выкл — Mod+G"
                     onClicked: Store.data.gameMode = !Store.data.gameMode
+                }
+                // спокойный режим — во всю ширину
+                QuickTile {
+                    Layout.fillWidth: true
+                    icon: "eye-off"
+                    label: "Спокойный режим"
+                    on: Mode.calm
+                    sub: Mode.calm ? "без сюжета, глитчей, углей и эффектов окон" : "выкл — всё живое"
+                    onClicked: Store.data.effects = !Store.data.effects
                 }
                 GridLayout {
                     Layout.fillWidth: true

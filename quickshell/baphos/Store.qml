@@ -44,6 +44,7 @@ Singleton {
             property bool nightLight: false     // ночной свет (wlsunset)
             property bool sounds: true          // звуки BaphOS (assets/sounds)
             property bool gameMode: false       // игровой режим: без глитчей, звуков, всплывашек
+            property bool effects: true         // false = «Спокойный режим»: без сюжета, глитчей, углей, живых обоев и эффектов окон
             property bool autoGameMode: true    // включать его самому, когда окно во весь экран
             property var favorites: ["kitty", "org.gnome.Nautilus", "helium", "steam", "discord", "org.telegram.desktop"]  // избранное в Пуске
             property bool story: true           // сюжет (вирус культа) — только визуальный

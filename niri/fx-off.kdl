@@ -1,0 +1,5 @@
+// BaphOS: эффекты окон ВЫКЛ — обычная короткая анимация («Спокойный режим»)
+animations {
+    window-open { duration-ms 110; curve "ease-out-quad"; }
+    window-close { duration-ms 90; curve "ease-out-quad"; }
+}
